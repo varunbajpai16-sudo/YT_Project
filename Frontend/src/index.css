@@ -1,0 +1,19 @@
+@import "tailwindcss";
+/* YT style scrollbar for Windows + Chrome */
+/* Dark scrollbar for sidebar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000; /* black */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
