@@ -11,11 +11,13 @@ function Channel() {
           {/* Channel Info */}
           <div className="flex flex-col items-center mb-8">
             <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center mb-3">
-              <img
+             {avatar? (<img
                 src={avatar}
-                alt="User Avatar"
+                alt="Guest"
                 className="w-full h-full object-cover"
-              />
+              />):
+              <span>Guest</span>
+              }
             </div>
             <p className="text-sm text-gray-400">Your channel</p>
             <p className="text-sm font-medium">{fullname}</p>

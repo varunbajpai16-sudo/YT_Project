@@ -50,7 +50,7 @@ const userschema = new mongoose.Schema({
     type: String,
   },
 
-})
+},{timestamps:true})
 
 //Creating save user middleware
 userschema.pre('save', async function () {

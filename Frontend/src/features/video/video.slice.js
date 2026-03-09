@@ -16,9 +16,15 @@ const videoSlice = createSlice({
   const { videos, page } = action.payload;
 
   if (page === 1) {
-    state.videos = videos; // reset
+    state.videos = videos;
   } else {
-    state.videos = [...state.videos, ...videos]; // append
+    const map = new Map();
+
+    [...state.videos, ...videos].forEach(v => {
+      map.set(v._id, v);
+    });
+
+    state.videos = Array.from(map.values());
   }
 },
 
