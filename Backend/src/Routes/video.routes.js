@@ -11,8 +11,8 @@ import { upload } from '../middlewares/multer.middlewares.js'
 import { verifytoken } from '../middlewares/authentication.middlewares.js'
 
 const router = Router()
-// router.use(verifytoken)
 router.get('/getallvideos', getallvideos)
+router.use(verifytoken)
 router.post(
   '/uploadvideo',
   upload.fields([

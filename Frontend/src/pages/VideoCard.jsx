@@ -8,7 +8,7 @@ const VideoCard = React.memo(({ video }) => {
   const handleMouseEnter = () => {
     hoverTimer.current = setTimeout(() => {
       setIsHover(true);
-    }, 1000); // wait 3 sec before showing video
+    }, 500); // wait .5 sec before showing video
   };
   function formatDuration(seconds) {
     const mins = Math.floor(seconds / 60);
@@ -27,7 +27,7 @@ const VideoCard = React.memo(({ video }) => {
   };
 
   const videoUrl = video.videofile
-    .replace("/upload/", "/upload/q_auto,f_auto,w_1280/")
+    .replace("/upload/", "/upload/q_auto,f_auto,w_1280/vc_auto/")
     .replace("http://", "https://");
 
   const thumbnailUrl = video.videofile
@@ -52,16 +52,20 @@ const VideoCard = React.memo(({ video }) => {
             loop
             playsInline
             preload="none"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
         ) : (
           <img
             loading="lazy"
             src={thumbnailUrl}
             alt={video.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
         )}
+
+        {/* Hover fade overlay */}
+       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
+
         {!isHover && (
           <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
             {formatDuration(video.duration)}

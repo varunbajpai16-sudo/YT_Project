@@ -4,10 +4,11 @@ import { setLoading, setError, setVideos } from "../features/video/video.slice";
 import api from "../services/axiosInstance.js";
 import VideoCard from "./VideoCard.jsx";
 import SortSection from "../components/shaped/SortSection.jsx";
-
+import { toggleonpage } from "../features/auth/auth.slice.js";
 export default function Home() {
   const [startIndex, setStartIndex] = useState(0);
   const dispatch = useDispatch();
+  dispatch(toggleonpage("Home"));
   const { videos, loading } = useSelector((state) => state.video);
   const [page, setPage] = useState(1);
 
@@ -56,10 +57,8 @@ export default function Home() {
 
   return (
     <div className="bg-[#0f0f0f] text-white min-h-screen">
-      
       {/* ── Video Grid ── */}
       <div className="px-4 py-6">
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8">
           {videos?.map((video) => (
             <VideoCard key={video._id} video={video} />
@@ -82,15 +81,12 @@ export default function Home() {
             Loading more videos...
           </p>
         )}
-
       </div>
 
       {/* ── Shorts Section ── */}
       <div className="px-4 py-6">
-
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-
           <div className="flex items-center gap-2">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
               <path
@@ -119,7 +115,6 @@ export default function Home() {
               →
             </button>
           </div>
-
         </div>
 
         {/* Shorts Grid */}
@@ -128,9 +123,7 @@ export default function Home() {
             <SortSection key={video._id} video={video} />
           ))}
         </div>
-
       </div>
-
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { act } from "react";
 
 // 🔥 Get stored data first
 const storedUser = localStorage.getItem("user");
@@ -10,6 +11,7 @@ const initialState = {
   isAuthenticated: !!storedToken,
   loading: false,
   error: null,
+  onpage:"Home"
 };
 
 const authSlice = createSlice({
@@ -51,6 +53,9 @@ const authSlice = createSlice({
       localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
     },
+    toggleonpage:(state,action)=>{
+      state.onpage= action.payload
+    }
   },
 });
 
@@ -59,6 +64,7 @@ export const {
   loginSuccess,
   loginFailure,
   logout,
+  toggleonpage
 } = authSlice.actions;
 
 export default authSlice.reducer;

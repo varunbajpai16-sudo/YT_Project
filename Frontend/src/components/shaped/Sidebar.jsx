@@ -1,19 +1,21 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 const Sidebar = () => {
+  const onpage = useSelector((state)=>state.auth.onpage)
   const Navigate = useNavigate()
   return (
     <div className="w-full h-full bg-black text-white border-r border-gray-800 p-5 overflow-y-auto">
       {/* Main Menu */}
       <div className="space-y-2">
         {/* Home */}
-        <div className="flex items-center gap-4 bg-gray-800 p-2 rounded-lg cursor-pointer">
+        <div className={`flex items-center gap-4 ${onpage==="Home"? "bg-gray-800" : "bg-black"} p-2 rounded-lg cursor-pointer`} onClick={()=>Navigate("/")}>
           <span>🏠</span>
           <span>Home</span>
         </div>
 
         {/* Shorts */}
-        <div className="flex items-center gap-4 p-2 hover:bg-gray-800 rounded-lg cursor-pointer" onClick={()=>Navigate("/sorts")}>
+        <div className={`flex items-center gap-4 ${onpage==="Sorts"? "bg-gray-800" : "bg-black"} p-2 rounded-lg cursor-pointer`} onClick={()=>Navigate("/sorts")}>
           <span>🎬</span>
           <span>Shorts</span>
         </div>

@@ -29,9 +29,11 @@ const getallvideos = asyncHandler(async (req, res) => {
     .sort({ [sortby]: order === 'desc' ? -1 : 1 })
     .skip(skip)
     .limit(limit)
-    .populate("owner")
+    .populate('owner')
 
-  res.status(200).json(new apiresponse(200, 'Videos fetched successfully', videos))
+  res
+    .status(200)
+    .json(new apiresponse(200, 'Videos fetched successfully', videos))
 })
 
 const uplodevideo = asyncHandler(async (req, res) => {
@@ -53,12 +55,11 @@ const uplodevideo = asyncHandler(async (req, res) => {
   const videourl = await uploadToCloudinary(videopath)
   const thumbnailurl = await uploadToCloudinary(thumbnailpath)
 
-  console.log(videourl, thumbnailurl)
   if (!videourl || !thumbnailurl) {
     res.status(500)
     throw new Error('Failed to upload video or thumbnail')
   }
-
+console.log(videourl)
   const video = await Video.create({
     title: title.trim(),
     description: description.trim(),
@@ -68,7 +69,9 @@ const uplodevideo = asyncHandler(async (req, res) => {
     owner: req.user._id,
   })
 
-  res.status(201).json(new apiresponse(201, 'Video uploaded successfully', video))
+  res
+    .status(201)
+    .json(new apiresponse(201, 'Video uploaded successfully', video))
 })
 
 const getvideobyid = asyncHandler(async (req, res) => {
@@ -84,7 +87,9 @@ const getvideobyid = asyncHandler(async (req, res) => {
     throw new Error('Video not found')
   }
 
-  res.status(200).json(new apiresponse(200, 'Video fetched successfully', video))
+  res
+    .status(200)
+    .json(new apiresponse(200, 'Video fetched successfully', video))
 })
 
 const updatevideo = asyncHandler(async (req, res) => {
@@ -120,7 +125,9 @@ const updatevideo = asyncHandler(async (req, res) => {
     { new: true },
   )
 
-  res.status(200).json(new apiresponse(200, 'Video updated successfully', updatedvideo))
+  res
+    .status(200)
+    .json(new apiresponse(200, 'Video updated successfully', updatedvideo))
 })
 
 const deletevideo = asyncHandler(async (req, res) => {
@@ -135,7 +142,9 @@ const deletevideo = asyncHandler(async (req, res) => {
   if (!video) {
     throw new Error('Video not found')
   }
-  res.status(200).json(new apiresponse(200, 'Video deleted successfully', video))
+  res
+    .status(200)
+    .json(new apiresponse(200, 'Video deleted successfully', video))
 })
 
 const togglevideostatus = asyncHandler(async (req, res) => {
@@ -146,25 +155,29 @@ const togglevideostatus = asyncHandler(async (req, res) => {
   }
 
   const updatedvideo = await Video.findByIdAndUpdate(
-  videoid,
-  [
+    videoid,
+    [
+      {
+        $set: {
+          isPublished: { $not: '$isPublished' },
+        },
+      },
+    ],
     {
-      $set: {
-        isPublished: { $not: "$isPublished" }
-      }
-    }
-  ],
-  {
-    new: true,
-    updatePipeline: true
-  }
-)
+      new: true,
+      updatePipeline: true,
+    },
+  )
 
   if (!updatedvideo) {
     throw new Error('Video not found')
   }
 
-  res.status(200).json(new apiresponse(200, 'Video status toggled successfully', updatedvideo))
+  res
+    .status(200)
+    .json(
+      new apiresponse(200, 'Video status toggled successfully', updatedvideo),
+    )
 })
 
 export {
