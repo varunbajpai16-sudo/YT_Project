@@ -1,0 +1,210 @@
+import { useEffect, useState } from "react";
+import api from "../services/axiosInstance";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+export default function ChannelContent() {
+  const [videos, setvideos] = useState([]);
+  const user = useSelector((state) => state.auth.user);
+  const avatar = user?.avatar;
+  const navigate = useNavigate();
+
+  const featchuservideos = async () => {
+    try {
+      const res = await api.get("video/getuservideos");
+      setvideos(res.data.data);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    featchuservideos();
+  }, []);
+
+  return (
+    <div className="flex min-h-screen bg-[#0f0f0f] text-gray-200">
+      {/* Sidebar */}
+      <aside className="w-64 bg-[#181818] p-6 flex flex-col justify-between">
+        <div>
+          {/* Channel Info */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center mb-3">
+              {avatar ? (
+                <img
+                  src={avatar}
+                  alt="Guest"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span>Guest</span>
+              )}
+            </div>
+
+            <p className="text-sm text-gray-400">Your channel</p>
+            <p className="text-sm font-medium">{user?.fullname}</p>
+          </div>
+
+          {/* Menu */}
+          <nav className="space-y-2 text-sm">
+            <NavLink
+              to="/channel"
+              className={({ isActive }) =>
+                `w-full block text-left px-4 py-2 rounded-lg ${
+                  isActive ? "bg-black" : "hover:bg-[#2a2a2a]"
+                }`
+              }
+            >
+              Dashboard
+            </NavLink>
+
+            <NavLink
+              to="/channelcontent"
+              className={({ isActive }) =>
+                `w-full block text-left px-4 py-2 rounded-lg ${
+                  isActive ? "bg-black" : "hover:bg-[#2a2a2a]"
+                }`
+              }
+            >
+              Content
+            </NavLink>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Analytics
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Community
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Subtitles
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Content detection
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Earn
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Customisation
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Audio library
+            </button>
+          </nav>
+        </div>
+
+        {/* Bottom Links */}
+        <div className="space-y-3 text-sm text-gray-400">
+          <div className="cursor-pointer hover:text-white">Settings</div>
+          <div className="cursor-pointer hover:text-white">Send feedback</div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-6">
+        {/* Header */}
+        <h1 className="text-xl font-semibold mb-6">Channel content</h1>
+
+        {/* Tabs */}
+        <div className="flex gap-6 text-sm border-b border-gray-700 pb-3 mb-6">
+          <span className="border-b-2 border-white pb-3">Videos</span>
+        </div>
+
+        {/* Filter */}
+
+        {/* Table Header */}
+        <div className="grid grid-cols-[3fr_1fr_1fr_1.5fr_1fr_1fr_1fr] text-xs text-gray-400 border-b border-gray-700 py-3 gap-4">
+          <span>Video</span>
+          <span>Visibility</span>
+          <span>Restrictions</span>
+          <span>Date ↓</span>
+          <span>Views</span>
+          <span>Comments</span>
+          <span>Likes (vs dislikes)</span>
+        </div>
+
+        {/* Video List */}
+        {videos.length > 0 &&
+          videos.map((video) => {
+            const thumbnailUrl = video.videofile
+              .replace("/upload/", "/upload/so_0,w_400,h_250,c_fill/")
+              .replace(".mp4", ".jpg")
+              .replace("http://", "https://");
+
+            return (
+              <div
+                key={video._id}
+                className="grid grid-cols-[3fr_1fr_1fr_1.5fr_1fr_1fr_1fr] items-center py-3 border-b border-gray-800 text-sm gap-4 hover:bg-gray-950"
+              >
+                {/* VIDEO INFO */}
+                <div className="flex items-center gap-4">
+                  <div className="relative w-44 h-24 bg-black rounded overflow-hidden">
+                    <img
+                      src={video.thumbnail || thumbnailUrl}
+                      className="w-full h-full object-cover"
+                    />
+
+                    <span className="absolute bottom-1 right-1 text-xs bg-black px-1 rounded">
+                      {video.duration || "0:14"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-white">{video.title}</p>
+
+                    <div className="flex gap-3 text-gray-400 mt-1 text-xs">
+                      <span
+                        className="cursor-pointer hover:text-white"
+                        onClick={() => navigate("/watch", { state: { video } })}
+                      >
+                        ▶
+                      </span>
+                      <span className="cursor-pointer hover:text-white">🗑️</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  🌍 <span>Public</span>
+                </div>
+
+                <span>Made for Kids</span>
+
+                <div>
+                  <p>{new Date(video.createdAt).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500">Published</p>
+                </div>
+
+                <span>{video.views || 0}</span>
+
+                <span>{video.commentsCount || 0}</span>
+
+                <span>-</span>
+              </div>
+            );
+          })}
+
+        {/* Empty State */}
+        {videos.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-[400px] text-center">
+            <div className="w-32 h-32 bg-teal-500 rounded-xl mb-6"></div>
+
+            <p className="text-gray-400 mb-4">No content available</p>
+
+            <button className="bg-white text-black px-5 py-2 rounded-full text-sm font-medium hover:bg-gray-200">
+              Upload videos
+            </button>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}

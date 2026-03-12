@@ -1,14 +1,17 @@
 import { useState, useRef } from "react";
 import React from "react";
+import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import Lottie from "lottie-react";
 import api from "../services/axiosInstance";
+import { NavLink } from "react-router";
 const Channel = React.memo(() => {
   const user = useSelector((state) => state.auth.user);
   const avatar = user?.avatar;
+  const navigate = useNavigate();
   const [uploade, setuploade] = useState(false);
-  const[apiuplode,setapiuplode] = useState(false)
+  const [apiuplode, setapiuplode] = useState(false);
   const [flag, setflag] = useState(false);
   const fullname = user?.fullname;
   const thumbnailref = useRef(null);
@@ -46,10 +49,10 @@ const Channel = React.memo(() => {
       data.append("description", formData.description);
       data.append("thumbnail", formData.thumbnail);
       data.append("videofile", formData.videofile);
-      setapiuplode(true)
+      setapiuplode(true);
       const response = await api.post("video/uploadvideo", data);
-      setapiuplode(false)
-      toast.success(response.data.message)
+      setapiuplode(false);
+      toast.success(response.data.message);
       console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -86,26 +89,55 @@ const Channel = React.memo(() => {
 
           {/* Menu */}
           <nav className="space-y-2 text-sm">
-            {[
-              "Dashboard",
-              "Content",
-              "Analytics",
-              "Community",
-              "Subtitles",
-              "Content detection",
-              "Earn",
-              "Customisation",
-              "Audio library",
-            ].map((item, index) => (
-              <div
-                key={index}
-                className={`px-4 py-2 rounded-lg cursor-pointer hover:bg-[#2a2a2a] ${
-                  index === 0 ? "bg-[#2a2a2a]" : ""
-                }`}
-              >
-                {item}
-              </div>
-            ))}
+            <NavLink
+              to="/channel"
+              className={({ isActive }) =>
+                `w-full block text-left px-4 py-2 rounded-lg ${
+                  isActive ? "bg-black" : "hover:bg-[#2a2a2a]"
+                }`
+              }
+            >
+              Dashboard
+            </NavLink>
+
+            <NavLink
+              to="/channelcontent"
+              className={({ isActive }) =>
+                `w-full block text-left px-4 py-2 rounded-lg ${
+                  isActive ? "bg-black" : "hover:bg-[#2a2a2a]"
+                }`
+              }
+            >
+              Content
+            </NavLink>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Analytics
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Community
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Subtitles
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Content detection
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Earn
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Customisation
+            </button>
+
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
+              Audio library
+            </button>
           </nav>
         </div>
 
@@ -363,20 +395,16 @@ const Channel = React.memo(() => {
           </div>
         </div>
       )}
-  {
-    apiuplode && (
-            <div className="flex flex-col items-center gap-6">
-                <Lottie
-                  animationData={registerLoading}
-                  loop={true}
-                  className="w-80"                   
-                />
-                <p className="text-gray-600 text-lg font-semibold">
-                Uploding....
-                </p>
-              </div>
-    )
-  }
+      {apiuplode && (
+        <div className="flex flex-col items-center gap-6">
+          <Lottie
+            animationData={registerLoading}
+            loop={true}
+            className="w-80"
+          />
+          <p className="text-gray-600 text-lg font-semibold">Uploding....</p>
+        </div>
+      )}
     </div>
   );
 });

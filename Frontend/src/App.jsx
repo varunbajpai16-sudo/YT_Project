@@ -11,6 +11,9 @@ import ChannelPage from "../src/pages/ChannelPage";
 import ShortsPage from "./pages/SortsPage";
 import WatchPage from "../src/pages/WatchPage";
 import Watchlayout from "../src/layouts/Watchlayout";
+import ChannelContent from "./pages/ChannelContentPage";
+import FeedbackLayout from "../src/layouts/FeedbackLayout";
+import SendFeedback from "./pages/SendFeedbackPage";
 function App() {
   return (
     <>
@@ -28,10 +31,15 @@ function App() {
 
         <Route element={<ChannelLayout />}>
           <Route path="/channel" element={<ChannelPage />} />
+          <Route path="/channelcontent" element={<ChannelContent />} />
         </Route>
 
-        <Route element={<Watchlayout/>}>
-          <Route path="/watch" element={<WatchPage/>} />
+        <Route element={<Watchlayout />}>
+          <Route path="/watch" element={<WatchPage />} />
+        </Route>
+
+        <Route element={<FeedbackLayout />}>
+          <Route path="/feedback" element={<SendFeedback />} />
         </Route>
       </Routes>
     </>

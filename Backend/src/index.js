@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config(); 
 import connectDB from "./db/databaseconnect.js";
 import app from "./app.js";
+import { Video } from "./models/videos.models.js";
 connectDB()
   .then(() => {
     app.listen(process.env.PORT, () => {
@@ -34,3 +35,5 @@ connectDB()
 
 // deleteAllImages();
 
+const videoid =  await Video.find()
+console.log(videoid)

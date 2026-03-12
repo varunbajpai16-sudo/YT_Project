@@ -8,6 +8,7 @@ export const verifytoken = asynchandler(async(req,__,next)=>{
     const token = req.cookies?.accesstoken || req.header("Authorization")?.replace("Bearer ", "")
 
     if(!token){
+        console.log("no token")
         throw new apierror(401,"Unauthorized, token not found")
     }
 

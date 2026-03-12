@@ -34,8 +34,7 @@ const registerUser = asynchandler(async (req, res) => {
   // check for user creation
   // return res
 
-  
-    const { username, email, password, fullname } = req.body
+  const { username, email, password, fullname } = req.body
 
   if (!username || !email || !password || !fullname) {
     throw new apierror(400, 'All fields are required')
@@ -130,6 +129,7 @@ const loginUser = asynchandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
   }
 
   res

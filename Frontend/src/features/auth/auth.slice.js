@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { act } from "react";
-
+import api from "../../services/axiosInstance";
 // 🔥 Get stored data first
 const storedUser = localStorage.getItem("user");
 const storedToken = localStorage.getItem("accessToken");
@@ -13,7 +13,14 @@ const initialState = {
   error: null,
   onpage:"Home"
 };
-
+const logingout = async()=>{
+  try {
+    const res = await api.post("/user/logout")
+    console.log("logout sucessfully")
+  } catch (error) {
+    console.log(error)
+  }
+}
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -52,6 +59,7 @@ const authSlice = createSlice({
 
       localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
+      logingout()
     },
     toggleonpage:(state,action)=>{
       state.onpage= action.payload

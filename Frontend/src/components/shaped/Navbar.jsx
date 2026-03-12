@@ -2,14 +2,18 @@ import { useState, useRef, useEffect } from "react";
 import ProfileDropdown from "../../components/ui/Dropdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+
 export default function Navbar() {
   const user = useSelector((state) => state.auth.user);
+  const videos = useSelector((state) => state.video.videos); // ✅ FIXED
+  const [query, setQuery] = useState("");
+  const [searchbar,setsearchbar] = useState(false)
   const navigate = useNavigate();
+
   const [showDropdown, setShowDropdown] = useState(false);
   const [showCreateMenu, setShowCreateMenu] = useState(false);
 
   const dropdownRef = useRef(null);
-
   const avatar = user?.avatar;
 
   useEffect(() => {
@@ -21,11 +25,13 @@ export default function Navbar() {
     }
 
     document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+
+  const filtered = videos?.filter((video) =>
+    video?.title?.toLowerCase().includes(query.toLowerCase()),
+  );
 
   return (
     <nav className="bg-black text-white px-6 py-4">
@@ -34,14 +40,12 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <span className="hover:bg-gray-800 p-2 rounded-2xl cursor-pointer">
             <svg
-              xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               viewBox="0 0 24 24"
-              fill="none"
               stroke="white"
+              fill="none"
               strokeWidth="2"
-              strokeLinecap="round"
             >
               <line x1="4" y1="6" x2="20" y2="6" />
               <line x1="4" y1="12" x2="20" y2="12" />
@@ -58,11 +62,14 @@ export default function Navbar() {
           </span>
         </div>
 
-        {/* Search */}
-        <div className="flex-1 max-w-sm mx-8">
+        {/* SEARCH */}
+        <div className="flex-1 max-w-sm mx-8 relative">
           <div className="relative">
             <input
               type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onClick={()=>setsearchbar(true)}
               placeholder="Search"
               className="w-full bg-gray-900 text-white rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-gray-700"
             />
@@ -83,9 +90,57 @@ export default function Navbar() {
               </svg>
             </button>
           </div>
+
+          {/* SEARCH DROPDOWN */}
+          {query && searchbar && (
+            <div className="absolute top-full left-0 w-full bg-[#212121] border border-gray-700 rounded-xl mt-2 shadow-lg overflow-hidden z-50">
+              {filtered?.slice(0, 6).map((video) => {
+                const thumbnailUrl = video.videofile
+                  .replace("/upload/", "/upload/so_0,w_400,h_250,c_fill/")
+                  .replace(".mp4", ".jpg")
+                  .replace("http://", "https://");
+
+                return (
+                  <div
+                    key={video._id}
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-[#303030] cursor-pointer transition"
+                    onClick={() => {
+                      setQuery(video.title);
+                      setsearchbar(false);
+                      navigate("/watch", { state: { video } });
+                    }}
+                  >
+                    {/* Thumbnail */}
+                    <img
+                      src={thumbnailUrl}
+                      alt={video.title}
+                      className="w-14 h-10 object-cover rounded"
+                    />
+
+                    {/* Video Info */}
+                    <div className="flex flex-col">
+                      <span className="text-sm text-white line-clamp-1">
+                        {video.title}
+                      </span>
+
+                      <span className="text-xs text-gray-400">
+                        {video.owner?.username}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {filtered?.length === 0 && (
+                <div className="px-4 py-2 text-gray-400 text-sm">
+                  No results
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Right Side */}
+        {/* RIGHT SIDE */}
         <div className="flex items-center gap-6 relative" ref={dropdownRef}>
           {/* Notification */}
           <button className="relative">
@@ -131,14 +186,16 @@ export default function Navbar() {
                 d="M12 4v16m8-8H4"
               />
             </svg>
-
             <span>Create</span>
           </button>
 
-          {/* CREATE DROPDOWN */}
+          {/* CREATE MENU */}
           {showCreateMenu && (
             <div className="absolute right-20 top-12 w-56 bg-[#282828] rounded-lg shadow-lg p-2 z-50">
-              <button className="flex items-center gap-3 w-full px-3 py-2 rounded-md hover:bg-[#3a3a3a] transition" onClick={()=>navigate("/channel")}>
+              <button
+                className="flex items-center gap-3 w-full px-3 py-2 rounded-md hover:bg-[#3a3a3a]"
+                onClick={() => navigate("/channel")}
+              >
                 📹 Upload video
               </button>
             </div>

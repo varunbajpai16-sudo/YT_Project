@@ -40,20 +40,6 @@ export default function Home() {
     fetchVideos(page);
   }, [page]);
 
-  if (!isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center h-[80vh] bg-black text-white px-4">
-        <div className="bg-[#1f1f1f] border border-gray-700 rounded-2xl px-10 py-8 text-center max-w-xl shadow-lg">
-          <h1 className="text-2xl font-semibold mb-3">
-            Try searching to get started
-          </h1>
-          <p className="text-gray-400 text-sm">
-            Start watching videos to help us build a feed of videos you'll love.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-[#0f0f0f] text-white min-h-screen">

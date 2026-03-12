@@ -17,17 +17,15 @@ export default function WatchPage() {
   }
 
   // Optimized Cloudinary video URL
-const videoUrl = video.videofile
-  .replace("/upload/", "/upload/q_auto,f_auto,w_1280/vc_auto/")
-  .replace("http://", "https://");
+  const videoUrl = video.videofile
+    .replace("/upload/", "/upload/q_auto,f_auto,w_1280/vc_auto/")
+    .replace("http://", "https://");
 
   return (
     <div className="bg-black text-white min-h-screen">
       <div className="max-w-[1400px] mx-auto px-6 py-6 flex flex-col lg:flex-row gap-8">
-        
         {/* LEFT SECTION */}
         <div className="flex-1">
-          
           {/* Video Player */}
           <div className="w-full aspect-video bg-zinc-900 rounded-xl overflow-hidden">
             <video
@@ -41,13 +39,10 @@ const videoUrl = video.videofile
           </div>
 
           {/* Title */}
-          <h1 className="text-xl font-semibold mt-4">
-            {video.title}
-          </h1>
+          <h1 className="text-xl font-semibold mt-4">{video.title}</h1>
 
           {/* Channel Section */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between mt-4 gap-4">
-            
             <div className="flex items-center gap-4">
               <img
                 src={video.owner.avatar}
@@ -76,22 +71,14 @@ const videoUrl = video.videofile
               <button className="bg-zinc-800 px-4 py-2 rounded-full text-sm hover:bg-zinc-700">
                 Save
               </button>
-              <button className="bg-zinc-800 px-4 py-2 rounded-full text-sm hover:bg-zinc-700">
-                ...
-              </button>
             </div>
-
           </div>
 
           {/* Description */}
           <div className="bg-zinc-900 rounded-xl p-4 mt-4 text-sm">
-            <p className="text-gray-300">
-              {video.views} views • 9 months ago
-            </p>
+            <p className="text-gray-300">{video.views} views • 9 months ago</p>
 
-            <p className="mt-2 text-gray-400">
-              {video.description}
-            </p>
+            <p className="mt-2 text-gray-400">{video.description}</p>
           </div>
 
           {/* Comments Section */}
@@ -117,9 +104,7 @@ const videoUrl = video.videofile
                 <div className="w-9 h-9 bg-gray-700 rounded-full"></div>
 
                 <div>
-                  <p className="text-sm font-medium">
-                    User Name
-                  </p>
+                  <p className="text-sm font-medium">User Name</p>
 
                   <p className="text-sm text-gray-400 mt-1">
                     Amazing match 🔥 Kohli was on another level!
@@ -133,7 +118,6 @@ const videoUrl = video.videofile
               </div>
             ))}
           </div>
-
         </div>
 
         {/* RIGHT SIDEBAR */}
@@ -144,7 +128,6 @@ const videoUrl = video.videofile
               <SidebarVideoCard key={v._id} video={v} />
             ))}
         </div>
-
       </div>
     </div>
   );

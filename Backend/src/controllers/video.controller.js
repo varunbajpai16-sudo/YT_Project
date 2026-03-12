@@ -2,6 +2,7 @@ import asyncHandler from '../utils/asynchandler.uitls.js'
 import { Video } from '../models/videos.models.js'
 import uploadToCloudinary from '../utils/cloudinary.js'
 import apiresponse from '../utils/apiresponse.utils.js'
+import Apierror from '../utils/apierror.utils.js'
 
 const getallvideos = asyncHandler(async (req, res) => {
   const {
@@ -59,7 +60,7 @@ const uplodevideo = asyncHandler(async (req, res) => {
     res.status(500)
     throw new Error('Failed to upload video or thumbnail')
   }
-console.log(videourl)
+
   const video = await Video.create({
     title: title.trim(),
     description: description.trim(),
@@ -179,6 +180,20 @@ const togglevideostatus = asyncHandler(async (req, res) => {
       new apiresponse(200, 'Video status toggled successfully', updatedvideo),
     )
 })
+ 
+const getuservdeosbyid = asyncHandler(async(req,res)=>{
+      const userid = req.user._id;
+      if(!userid){
+        throw new Apierror(400,"user id not verified")
+      }
+      const videos = await Video.find({owner:userid}).populate("owner")
+
+      if(!videos){
+        throw new Apierror(404,"User Videos not Found")
+      }
+
+      res.status(200).json(new apiresponse(200,"User Videos Featched Sucessfully",videos));
+})
 
 export {
   getallvideos,
@@ -187,4 +202,5 @@ export {
   updatevideo,
   deletevideo,
   togglevideostatus,
+  getuservdeosbyid
 }

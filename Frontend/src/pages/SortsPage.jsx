@@ -1,20 +1,21 @@
 import { useLocation } from "react-router";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { toggleonpage } from "../features/auth/auth.slice";
+
 export default function ShortsPage() {
   const videos = useSelector((state) => state.video.videos);
-  const onpage = useSelector((state)=>state.auth.onpage)
-  const dispatch = useDispatch()
-  dispatch(toggleonpage("Sorts"))
+  const dispatch = useDispatch();
+  dispatch(toggleonpage("Shorts"));
+
   const location = useLocation();
   const selectedVideo = location.state?.video;
 
   const shortsVideos = selectedVideo ? [selectedVideo, ...videos] : videos;
 
   return (
-    <div className="bg-black min-h-screen flex justify-center">
-      
-      {/* Phone Frame */}
+    <div className="bg-black min-h-screen flex justify-center items-center">
+
+      {/* PHONE FRAME */}
       <div className="w-[390px] h-screen overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
 
         {shortsVideos.map((video) => {
@@ -25,22 +26,23 @@ export default function ShortsPage() {
           return (
             <div
               key={video._id}
-              className="relative w-full h-screen snap-start bg-gray-800"
+              className="relative w-full h-[90vh] snap-start bg-black rounded-xl overflow-hidden"
             >
-              {/* Video */}
+
+              {/* VIDEO */}
               <video
                 src={videoUrl}
                 autoPlay
-                controls
                 muted
+                loop
                 playsInline
-                preload="metadata"
                 className="w-full h-full object-cover"
               />
 
-              {/* Right Action Bar */}
-              <div className="absolute right-4 bottom-24 flex flex-col items-center gap-6 text-white">
+              {/* RIGHT ACTION BAR */}
+              <div className="absolute right-4 bottom-28 flex flex-col items-center gap-6 text-white">
 
+                {/* Profile */}
                 <div className="relative">
                   <img
                     src={video.owner?.avatar}
@@ -52,40 +54,80 @@ export default function ShortsPage() {
                   </div>
                 </div>
 
+                {/* Like */}
                 <div className="flex flex-col items-center">
                   <span className="text-3xl">❤️</span>
-                  <span className="text-sm font-medium">24.5K</span>
+                  <span className="text-xs">24.5K</span>
                 </div>
 
+                {/* Dislike */}
+                <div className="flex flex-col items-center">
+                  <span className="text-3xl">👎</span>
+                  <span className="text-xs">Dislike</span>
+                </div>
+
+                {/* Comments */}
                 <div className="flex flex-col items-center">
                   <span className="text-3xl">💬</span>
-                  <span className="text-sm font-medium">1.2K</span>
+                  <span className="text-xs">1.2K</span>
                 </div>
 
+                {/* Share */}
                 <div className="flex flex-col items-center">
                   <span className="text-3xl">↗</span>
-                  <span className="text-sm font-medium">Share</span>
+                  <span className="text-xs">Share</span>
                 </div>
 
+                {/* Remix */}
+                <div className="flex flex-col items-center">
+                  <span className="text-3xl">🎵</span>
+                  <span className="text-xs">Remix</span>
+                </div>
+
+                {/* More */}
                 <div className="text-3xl">⋮</div>
               </div>
 
-              {/* Bottom Info */}
-              <div className="absolute bottom-0 w-full px-4 pb-6 pt-16 bg-gradient-to-t from-black via-black/70 to-transparent text-white">
-                
+              {/* BOTTOM INFO */}
+              <div className="absolute bottom-0 w-full px-4 pb-6 pt-20 bg-gradient-to-t from-black via-black/70 to-transparent text-white">
+
+                {/* USER + SUBSCRIBE */}
                 <div className="flex items-center gap-3 mb-2">
+
                   <span className="font-semibold text-sm">
                     @{video.owner?.username}
                   </span>
 
-                  <button className="bg-white text-black text-xs px-4 py-1 rounded-full font-semibold">
+                  <button className="bg-white text-black text-xs px-4 py-1 rounded-full font-semibold hover:bg-gray-200">
                     Subscribe
                   </button>
+
                 </div>
 
-                <p className="text-sm leading-snug">
+                {/* DESCRIPTION */}
+                <p className="text-sm leading-snug mb-3">
                   {video.description}
                 </p>
+
+                {/* MUSIC BAR */}
+                <div className="flex items-center gap-2 text-sm opacity-90">
+
+                  <span className="text-lg">🎵</span>
+
+                  <span className="truncate">
+                    Original Sound - @{video.owner?.username}
+                  </span>
+
+                  {/* Rotating disc */}
+                  <div className="ml-auto w-8 h-8 rounded-full overflow-hidden border border-white animate-spin">
+                    <img
+                      src={video.owner?.avatar}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                </div>
 
               </div>
             </div>
