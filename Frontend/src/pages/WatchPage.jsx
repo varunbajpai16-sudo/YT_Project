@@ -1,13 +1,35 @@
 import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import SidebarVideoCard from "./SidebarVideoCard";
+import api from "../services/axiosInstance";
+import { setComments } from "../features/comment/commentslice";
+import { useEffect } from "react";
 
 export default function WatchPage() {
+  const dispatch = useDispatch();
+
+  const fetchcomment = async (video) => {
+    try {
+      const res = await api.get(`/comments/video-comments/${video._id}`);
+      console.log(res.data.data)
+      dispatch(setComments(res.data.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const comments = useSelector((state) => state.comments.comments);
   const videos = useSelector((state) => state.video.videos);
+
   const location = useLocation();
   const video = location.state?.video;
 
-  // Prevent crash if page refreshed
+  useEffect(() => {
+    if (video) {
+      fetchcomment(video);
+    }
+  }, [video]);
+
   if (!video) {
     return (
       <div className="text-white flex items-center justify-center h-screen">
@@ -16,7 +38,6 @@ export default function WatchPage() {
     );
   }
 
-  // Optimized Cloudinary video URL
   const videoUrl = video.videofile
     .replace("/upload/", "/upload/q_auto,f_auto,w_1280/vc_auto/")
     .replace("http://", "https://");
@@ -24,8 +45,10 @@ export default function WatchPage() {
   return (
     <div className="bg-black text-white min-h-screen">
       <div className="max-w-[1400px] mx-auto px-6 py-6 flex flex-col lg:flex-row gap-8">
+
         {/* LEFT SECTION */}
         <div className="flex-1">
+
           {/* Video Player */}
           <div className="w-full aspect-video bg-zinc-900 rounded-xl overflow-hidden">
             <video
@@ -41,7 +64,7 @@ export default function WatchPage() {
           {/* Title */}
           <h1 className="text-xl font-semibold mt-4">{video.title}</h1>
 
-          {/* Channel Section */}
+          {/* Channel */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between mt-4 gap-4">
             <div className="flex items-center gap-4">
               <img
@@ -60,7 +83,6 @@ export default function WatchPage() {
               </button>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex items-center gap-3 flex-wrap">
               <button className="bg-zinc-800 px-4 py-2 rounded-full text-sm hover:bg-zinc-700">
                 👍 1.5K
@@ -77,13 +99,14 @@ export default function WatchPage() {
           {/* Description */}
           <div className="bg-zinc-900 rounded-xl p-4 mt-4 text-sm">
             <p className="text-gray-300">{video.views} views • 9 months ago</p>
-
             <p className="mt-2 text-gray-400">{video.description}</p>
           </div>
 
-          {/* Comments Section */}
+          {/* Comments */}
           <div className="mt-8">
-            <h2 className="font-semibold mb-4">7 Comments</h2>
+            <h2 className="font-semibold mb-4">
+              {comments?.length || 0} Comments
+            </h2>
 
             {/* Add Comment */}
             <div className="flex items-start gap-3 mb-6">
@@ -98,23 +121,31 @@ export default function WatchPage() {
               />
             </div>
 
-            {/* Comment Example */}
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="flex gap-3 mb-6">
-                <div className="w-9 h-9 bg-gray-700 rounded-full"></div>
+            {/* Comment List */}
+            {comments?.map((item) => (
+              <div key={item._id} className="flex gap-3 mb-6">
+
+                <img
+                  src={item.owner?.avatar}
+                  className="w-9 h-9 rounded-full"
+                  alt="user"
+                />
 
                 <div>
-                  <p className="text-sm font-medium">User Name</p>
+                  <p className="text-sm font-medium">
+                    {item.owner?.username}
+                  </p>
 
                   <p className="text-sm text-gray-400 mt-1">
-                    Amazing match 🔥 Kohli was on another level!
+                    {item.content}
                   </p>
 
                   <div className="flex gap-4 mt-2 text-xs text-gray-400">
-                    <span>👍 24</span>
+                    <span>👍 {item.likes || 0}</span>
                     <span>Reply</span>
                   </div>
                 </div>
+
               </div>
             ))}
           </div>
@@ -128,6 +159,7 @@ export default function WatchPage() {
               <SidebarVideoCard key={v._id} video={v} />
             ))}
         </div>
+
       </div>
     </div>
   );

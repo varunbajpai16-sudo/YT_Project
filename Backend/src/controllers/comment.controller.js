@@ -20,7 +20,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
   const comments = await Comment.find({ video: videoId })
     .skip(skip)
-    .limit(Number(limit))
+    .limit(Number(limit)).populate("owner")
 
   res
     .status(200)
@@ -28,7 +28,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
 })
 
 const addcomment = asyncHandler(async (req, res) => {
-  const { content, videoId } = req.body
+  const { content, videoId} = req.body
 
   if (!mongoose.Types.ObjectId.isValid(videoId)) {
     throw new apierror(400, 'Invalid video id')

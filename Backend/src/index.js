@@ -35,5 +35,3 @@ connectDB()
 
 // deleteAllImages();
 
-const videoid =  await Video.find()
-console.log(videoid)

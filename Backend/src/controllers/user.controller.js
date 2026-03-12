@@ -129,6 +129,7 @@ const loginUser = asynchandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: "none",
     maxAge: 24 * 60 * 60 * 1000,
   }
 
@@ -160,6 +161,7 @@ const logoutUser = asynchandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: "none"
   }
 
   res
@@ -200,6 +202,7 @@ const refreshaccessToken = asynchandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+     sameSite: "none"
   }
 
   res
