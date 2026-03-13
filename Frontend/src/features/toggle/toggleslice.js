@@ -10,20 +10,30 @@ const toggleSlice = createSlice({
   initialState,
   reducers: {
 
+    // COMMENTS
     toggleComments: (state) => {
       state.showComments = !state.showComments;
     },
 
-    toggleSidebar: (state) => {
-      state.showSidebar = !state.showSidebar;
+    openComments: (state) => {
+      state.showComments = true;
     },
 
     closeComments: (state) => {
       state.showComments = false;
     },
 
-    openComments: (state) => {
-      state.showComments = true;
+    // SIDEBAR
+    toggleSidebar: (state) => {
+      state.showSidebar = !state.showSidebar;
+    },
+
+    openSidebar: (state) => {
+      state.showSidebar = true;
+    },
+
+    closeSidebar: (state) => {
+      state.showSidebar = false;
     }
 
   },
@@ -31,9 +41,11 @@ const toggleSlice = createSlice({
 
 export const {
   toggleComments,
-  toggleSidebar,
+  openComments,
   closeComments,
-  openComments
+  toggleSidebar,
+  openSidebar,
+  closeSidebar
 } = toggleSlice.actions;
 
 export default toggleSlice.reducer;
