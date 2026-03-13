@@ -1,13 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://yt-project-backend.onrender.com/api/v1", 
-  withCredentials: true, 
+  baseURL: "https://yt-project-backend.onrender.com/api/v1",
+  withCredentials: true,
 });
 
 api.interceptors.request.use(
   (config) => {
-     const token= localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -15,7 +15,7 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 export default api;
