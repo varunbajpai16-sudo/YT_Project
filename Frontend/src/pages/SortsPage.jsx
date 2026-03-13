@@ -1,10 +1,25 @@
 import { useLocation } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleonpage } from "../features/auth/auth.slice";
+import { useEffect, useState } from "react";
+import api from "../services/axiosInstance";
+import { setComments, addComment } from "../features/comment/commentslice";
+import { toggleVideoLike, setVideoLikes } from "../features/like/Likeslice";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function ShortsPage() {
   const videos = useSelector((state) => state.video.videos);
+  const comments = useSelector((state) => state.comments.comments);
+  const likes = useSelector((state) => state.likes.videoLikes);
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [showComments, setShowComments] = useState(false);
+  const [currentVideo, setCurrentVideo] = useState(null);
+  const [comment, setComment] = useState("");
+
   dispatch(toggleonpage("Shorts"));
 
   const location = useLocation();
@@ -12,12 +27,84 @@ export default function ShortsPage() {
 
   const shortsVideos = selectedVideo ? [selectedVideo, ...videos] : videos;
 
+  // ===================== LIKE =====================
+
+  const fetchVideoLikes = async (videoId) => {
+    try {
+      const res = await api.get(`/likes/video-likes/${videoId}`);
+
+      dispatch(
+        setVideoLikes({
+          videoId,
+          likes: res.data.data.length,
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const likeVideo = async (videoId) => {
+    try {
+      await api.post(`/likes/like-video/${videoId}`);
+
+      dispatch(toggleVideoLike({ videoId }));
+
+      toast.success("Video liked");
+    } catch (error) {
+      if (error.response?.status === 401) {
+        toast.error("Login required");
+        navigate("/login");
+      } else if (error.response?.status === 409) {
+        toast.error("Already liked");
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+
+  // ===================== COMMENTS =====================
+
+  const fetchComments = async (video) => {
+    try {
+      const res = await api.get(`/comments/video-comments/${video._id}`);
+
+      dispatch(setComments(res.data.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addCommentHandler = async () => {
+    try {
+      if (!comment.trim()) {
+        return toast.error("Comment cannot be empty");
+      }
+
+      const res = await api.post("/comments/add-comment", {
+        content: comment,
+        videoId: currentVideo._id,
+      });
+
+      dispatch(addComment(res.data.data));
+
+      setComment("");
+
+      toast.success("Comment added");
+    } catch (error) {
+      toast.error("Failed to comment");
+    }
+  };
+
+  useEffect(() => {
+    shortsVideos.forEach((v) => {
+      fetchVideoLikes(v._id);
+    });
+  }, []);
+
   return (
     <div className="bg-black min-h-screen flex justify-center items-center">
-
-      {/* PHONE FRAME */}
       <div className="w-[390px] h-screen overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
-
         {shortsVideos.map((video) => {
           const videoUrl = video.videofile
             .replace("/upload/", "/upload/q_auto,f_auto,w_1280/vc_auto/")
@@ -28,7 +115,6 @@ export default function ShortsPage() {
               key={video._id}
               className="relative w-full h-[90vh] snap-start bg-black rounded-xl overflow-hidden"
             >
-
               {/* VIDEO */}
               <video
                 src={videoUrl}
@@ -49,51 +135,41 @@ export default function ShortsPage() {
                     alt="Profile"
                     className="w-12 h-12 rounded-full border-2 border-white object-cover"
                   />
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-red-600 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">
-                    +
-                  </div>
                 </div>
 
-                {/* Like */}
-                <div className="flex flex-col items-center">
+                {/* LIKE */}
+                <div
+                  className="flex flex-col items-center cursor-pointer"
+                  onClick={() => likeVideo(video._id)}
+                >
                   <span className="text-3xl">❤️</span>
-                  <span className="text-xs">24.5K</span>
+                  <span className="text-xs">{likes[video._id] || 0}</span>
                 </div>
 
-                {/* Dislike */}
-                <div className="flex flex-col items-center">
-                  <span className="text-3xl">👎</span>
-                  <span className="text-xs">Dislike</span>
-                </div>
-
-                {/* Comments */}
-                <div className="flex flex-col items-center">
+                {/* COMMENTS */}
+                <div
+                  className="flex flex-col items-center cursor-pointer"
+                  onClick={() => {
+                    setShowComments(true);
+                    setCurrentVideo(video);
+                    fetchComments(video);
+                  }}
+                >
                   <span className="text-3xl">💬</span>
-                  <span className="text-xs">1.2K</span>
+                  <span className="text-xs">{comments?.length || 0}</span>
                 </div>
 
-                {/* Share */}
+                {/* SHARE */}
                 <div className="flex flex-col items-center">
                   <span className="text-3xl">↗</span>
                   <span className="text-xs">Share</span>
                 </div>
-
-                {/* Remix */}
-                <div className="flex flex-col items-center">
-                  <span className="text-3xl">🎵</span>
-                  <span className="text-xs">Remix</span>
-                </div>
-
-                {/* More */}
-                <div className="text-3xl">⋮</div>
               </div>
 
               {/* BOTTOM INFO */}
               <div className="absolute bottom-0 w-full px-4 pb-6 pt-20 bg-gradient-to-t from-black via-black/70 to-transparent text-white">
 
-                {/* USER + SUBSCRIBE */}
                 <div className="flex items-center gap-3 mb-2">
-
                   <span className="font-semibold text-sm">
                     @{video.owner?.username}
                   </span>
@@ -101,39 +177,67 @@ export default function ShortsPage() {
                   <button className="bg-white text-black text-xs px-4 py-1 rounded-full font-semibold hover:bg-gray-200">
                     Subscribe
                   </button>
-
                 </div>
 
-                {/* DESCRIPTION */}
                 <p className="text-sm leading-snug mb-3">
                   {video.description}
                 </p>
-
-                {/* MUSIC BAR */}
-                <div className="flex items-center gap-2 text-sm opacity-90">
-
-                  <span className="text-lg">🎵</span>
-
-                  <span className="truncate">
-                    Original Sound - @{video.owner?.username}
-                  </span>
-
-                  {/* Rotating disc */}
-                  <div className="ml-auto w-8 h-8 rounded-full overflow-hidden border border-white animate-spin">
-                    <img
-                      src={video.owner?.avatar}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                </div>
 
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* COMMENTS POPUP */}
+
+      {showComments && (
+        <div className="fixed bottom-0 left-0 w-full h-[60%] bg-zinc-900 text-white p-4 rounded-t-2xl overflow-y-auto">
+
+          <div className="flex justify-between mb-4">
+            <h2 className="font-semibold">Comments</h2>
+
+            <button onClick={() => setShowComments(false)}>✖</button>
+          </div>
+
+          {/* Add comment */}
+          <div className="flex gap-2 mb-4">
+            <input
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Add a comment..."
+              className="flex-1 bg-zinc-800 p-2 rounded outline-none"
+            />
+
+            <button
+              onClick={addCommentHandler}
+              className="bg-white text-black px-3 rounded"
+            >
+              Post
+            </button>
+          </div>
+
+          {/* Comment list */}
+          {comments?.map((c) => (
+            <div key={c._id} className="flex gap-3 mb-4">
+              <img
+                src={c.owner?.avatar}
+                className="w-8 h-8 rounded-full"
+              />
+
+              <div>
+                <p className="text-sm font-semibold">
+                  {c.owner?.username}
+                </p>
+
+                <p className="text-sm text-gray-300">
+                  {c.content}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

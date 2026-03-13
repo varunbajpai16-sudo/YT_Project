@@ -14,6 +14,7 @@ import Watchlayout from "../src/layouts/Watchlayout";
 import ChannelContent from "./pages/ChannelContentPage";
 import FeedbackLayout from "../src/layouts/FeedbackLayout";
 import SendFeedback from "./pages/SendFeedbackPage";
+import SettingsPage from "./pages/SettingPage";
 function App() {
   return (
     <>
@@ -41,6 +42,9 @@ function App() {
         <Route element={<FeedbackLayout />}>
           <Route path="/feedback" element={<SendFeedback />} />
         </Route>
+
+          <Route path="/setting" element={<SettingsPage />} />
+        
       </Routes>
     </>
   );

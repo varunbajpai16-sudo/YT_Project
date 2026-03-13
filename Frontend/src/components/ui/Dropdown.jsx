@@ -56,7 +56,7 @@ export default function ProfileDropdown() {
 
         <div className="border-t border-gray-700 my-2"></div>
 
-        <MenuItem label="Settings" />
+        <MenuItem label="Settings"  onClick={()=>navigate("/setting")}/>
         <a
           href="https://support.google.com/youtube/?hl=en#topic=9257498"
           target="_blank"

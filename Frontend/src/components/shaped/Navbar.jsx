@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import ProfileDropdown from "../../components/ui/Dropdown";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
+import { toggleSidebar } from "../../features/toggle/toggleslice";
 
 export default function Navbar() {
+  const dispatch = useDispatch()
+  const togglesidebar = useSelector((state)=>state.toggle.showSidebar)
   const user = useSelector((state) => state.auth.user);
   const videos = useSelector((state) => state.video.videos); // ✅ FIXED
   const [query, setQuery] = useState("");
@@ -15,7 +18,9 @@ export default function Navbar() {
 
   const dropdownRef = useRef(null);
   const avatar = user?.avatar;
-
+const toggle = ()=>{
+  dispatch(toggleSidebar())
+}
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -37,7 +42,7 @@ export default function Navbar() {
     <nav className="bg-black text-white px-6 py-4">
       <div className="w-full mx-auto flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" onClick={toggle}>
           <span className="hover:bg-gray-800 p-2 rounded-2xl cursor-pointer">
             <svg
               width="24"
@@ -53,7 +58,7 @@ export default function Navbar() {
             </svg>
           </span>
 
-          <div className="w-6 h-6 bg-red-600 rounded-sm flex items-center justify-center">
+          <div className="w-6 h-6 bg-red-600 rounded-sm flex items-center justify-center hover:cursor-pointer" onClick={()=>navigate("/")}>
             <div className="w-0 h-0 border-l-[8px] border-l-white border-y-[6px] border-y-transparent ml-1"></div>
           </div>
 
