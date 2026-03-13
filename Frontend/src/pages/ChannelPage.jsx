@@ -6,6 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Lottie from "lottie-react";
 import api from "../services/axiosInstance";
 import { NavLink } from "react-router";
+import registerLoading from "../../public/loding.json";
 const Channel = React.memo(() => {
   const user = useSelector((state) => state.auth.user);
   const avatar = user?.avatar;
@@ -396,13 +397,13 @@ const Channel = React.memo(() => {
         </div>
       )}
       {apiuplode && (
-        <div className="flex flex-col items-center gap-6">
+        <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50">
           <Lottie
             animationData={registerLoading}
             loop={true}
-            className="w-80"
+            className="w-72"
           />
-          <p className="text-gray-600 text-lg font-semibold">Uploding....</p>
+          <p className="text-white text-lg font-semibold mt-4">Uploading...</p>
         </div>
       )}
     </div>

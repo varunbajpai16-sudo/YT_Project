@@ -30,7 +30,7 @@ const SidebarVideoCard = memo(({ video }) => {
       <div className="relative min-w-[168px] h-[94px] rounded-lg overflow-hidden">
         <img
           loading="lazy"
-          src={thumbnailUrl}
+          src={video.thumbnail || thumbnailUrl}
           alt={video.title}
           className="w-full h-full object-cover"
         />
@@ -42,17 +42,11 @@ const SidebarVideoCard = memo(({ video }) => {
 
       {/* Info */}
       <div className="flex flex-col text-sm">
-        <p className="font-medium text-white line-clamp-2">
-          {video.title}
-        </p>
+        <p className="font-medium text-white line-clamp-2">{video.title}</p>
 
-        <p className="text-gray-400 text-xs mt-1">
-          {video.owner?.username}
-        </p>
+        <p className="text-gray-400 text-xs mt-1">{video.owner?.username}</p>
 
-        <p className="text-gray-400 text-xs">
-          {video.views} views
-        </p>
+        <p className="text-gray-400 text-xs">{video.views} views</p>
       </div>
     </div>
   );
