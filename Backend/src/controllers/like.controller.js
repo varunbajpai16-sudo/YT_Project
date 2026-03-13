@@ -13,23 +13,23 @@ const ToggleVideoLike = asyncHandler(async (req, res) => {
     throw new apierror(400, 'VideoId is required')
   }
 
-    if (!mongoose.Types.ObjectId.isValid(videoId)) {
+  if (!mongoose.Types.ObjectId.isValid(videoId)) {
     throw new apierror(400, 'Invalid video id')
   }
 
   const video = await Video.findById(videoId)
 
   if (!video) {
-    throw new apierror(404, 'Video Dose not exist')
+    throw new apierror(404, 'Video does not exist')
   }
 
-  const user = await Like.findOne({
-    video:videoId,
-    likedBy:req.user._id
+  const existingLike = await Like.findOne({
+    video: videoId,
+    likedBy: req.user._id,
   })
 
-  if(user){
-    throw new apierror(300,"User like this video already")
+  if (existingLike) {
+    throw new apierror(409, 'User already liked this video')
   }
 
   const like = await Like.create({
@@ -37,9 +37,8 @@ const ToggleVideoLike = asyncHandler(async (req, res) => {
     likedBy: req.user._id,
   })
 
-  res.status(200).json(new apiresponse(200, 'Video is liked ', like))
+  res.status(200).json(new apiresponse(200, like, 'Video liked successfully'))
 })
-
 
 const ToggleCommentLike = asyncHandler(async (req, res) => {
   const { commentId } = req.body
@@ -48,7 +47,7 @@ const ToggleCommentLike = asyncHandler(async (req, res) => {
     throw new apierror(400, 'commentId is required')
   }
 
-    if (!mongoose.Types.ObjectId.isValid(commentId)) {
+  if (!mongoose.Types.ObjectId.isValid(commentId)) {
     throw new apierror(400, 'Invalid comment id')
   }
 
@@ -59,12 +58,12 @@ const ToggleCommentLike = asyncHandler(async (req, res) => {
   }
 
   const user = await Like.findOne({
-    comment:commentId,
-    likedBy:req.user._id
+    comment: commentId,
+    likedBy: req.user._id,
   })
 
-  if(user){
-    throw new apierror(300,"User like this comment already")
+  if (user) {
+    throw new apierror(300, 'User like this comment already')
   }
 
   const like = await Like.create({
@@ -75,35 +74,36 @@ const ToggleCommentLike = asyncHandler(async (req, res) => {
   res.status(200).json(new apiresponse(200, 'Commnet is liked ', like))
 })
 
-const GetVideolikes = asyncHandler(async(req,res)=>{
-    const {videoId} = req.params;
+const GetVideolikes = asyncHandler(async (req, res) => {
+  const { videoId } = req.params
 
-    if(!videoId){
-        throw new apierror(400,"Video id required")
-    }
+  if (!videoId) {
+    throw new apierror(400, 'Video id required')
+  }
 
-    const likes = await Like.find({
-        video:videoId
-    })
-    
-    res.status(200).json(new apiresponse(200,"Video Likes Featched Sucessfully",likes))
+  const likes = await Like.find({
+    video: videoId,
+  })
+
+  res
+    .status(200)
+    .json(new apiresponse(200, 'Video Likes Featched Sucessfully', likes))
 })
 
-const GetCommnetlikes = asyncHandler(async(req,res)=>{
-    const {commentId} = req.params;
+const GetCommnetlikes = asyncHandler(async (req, res) => {
+  const { commentId } = req.params
 
-    if(!commentId){
-        throw new apierror(400,"comment id required")
-    }
+  if (!commentId) {
+    throw new apierror(400, 'comment id required')
+  }
 
-    const likes = await Like.find({
-        comment:commentId
-    })
-    
-    res.status(200).json(new apiresponse(200,"comment Likes Featched Sucessfully",likes))
+  const likes = await Like.find({
+    comment: commentId,
+  })
+
+  res
+    .status(200)
+    .json(new apiresponse(200, 'comment Likes Featched Sucessfully', likes))
 })
 
-
-
-
-export { ToggleVideoLike ,ToggleCommentLike,GetVideolikes,GetCommnetlikes}
+export { ToggleVideoLike, ToggleCommentLike, GetVideolikes, GetCommnetlikes }

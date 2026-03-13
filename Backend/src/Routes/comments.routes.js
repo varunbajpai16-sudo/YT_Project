@@ -3,9 +3,10 @@ import { addcomment, getVideoComments,updatecomment,deletecomment } from '../con
 import { verifytoken } from '../middlewares/authentication.middlewares.js'
 const router = Router()
 
-router.use(verifytoken)
+
 
 router.get("/video-comments/:videoId",getVideoComments)
+router.use(verifytoken)
 router.post("/add-comment",addcomment)
 router.patch("/update-comment/:commentId",updatecomment)
 router.delete("/delete-comment/:commentId",deletecomment)

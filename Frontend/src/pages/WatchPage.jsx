@@ -3,15 +3,34 @@ import { useSelector, useDispatch } from "react-redux";
 import SidebarVideoCard from "./SidebarVideoCard";
 import api from "../services/axiosInstance";
 import { setComments } from "../features/comment/commentslice";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import { addComment } from "../features/comment/commentslice";
+import toast from "react-hot-toast";
+import { formatDistanceToNow } from "date-fns";
+import { toggleVideoLike } from "../features/like/Likeslice";
+import { setVideoLikes } from "../features/like/Likeslice";
+import { useNavigate } from "react-router-dom";
+import { setVideos, setLoading } from "../features/video/video.slice";
 export default function WatchPage() {
-  const dispatch = useDispatch();
+  const fetchVideos = async (page = 1) => {
+    try {
+      dispatch(setLoading(true));
 
+      const res = await api.get(`video/getallvideos?page=${page}&limit=12`);
+
+      dispatch(setVideos({ videos: res.data.data, page }));
+    } catch (error) {
+      dispatch(setError(error.message));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+  const navigate = useNavigate();
+  const [comment, setComment] = useState("");
+  const dispatch = useDispatch();
   const fetchcomment = async (video) => {
     try {
       const res = await api.get(`/comments/video-comments/${video._id}`);
-      console.log(res.data.data)
       dispatch(setComments(res.data.data));
     } catch (error) {
       console.log(error);
@@ -20,15 +39,88 @@ export default function WatchPage() {
 
   const comments = useSelector((state) => state.comments.comments);
   const videos = useSelector((state) => state.video.videos);
+  useEffect(() => {
+    if (videos.length === 0) {
+      fetchVideos();
+    }
+  }, []);
 
   const location = useLocation();
   const video = location.state?.video;
+  const AddComments = async () => {
+    try {
+      if (!comment.trim()) {
+        return toast.error("Comment cannot be empty");
+      }
+
+      const data = {
+        content: comment,
+        videoId: video._id,
+      };
+
+      const res = await api.post("/comments/add-comment", data);
+
+      dispatch(addComment(res.data.data));
+
+      toast.success("Comment Added Successfully");
+
+      setComment("");
+    } catch (error) {
+      toast.error("Failed to add comment");
+      console.log(error);
+    }
+  };
+  const featchVideoLikes = async () => {
+    try {
+      const res = await api.get(`/likes/video-likes/${video._id}`);
+      console.log(res.data.data);
+      dispatch(
+        setVideoLikes({
+          videoId: video._id,
+          likes: res.data.data.length,
+        }),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    featchVideoLikes();
+  }, [video]);
 
   useEffect(() => {
     if (video) {
       fetchcomment(video);
     }
   }, [video]);
+  const videoLikes = useSelector(
+    (state) => state.likes.videoLikes[video?._id] || 0,
+  );
+  const likevideo = async () => {
+    try {
+      await api.post(`/likes/like-video/${video._id}`);
+
+      dispatch(toggleVideoLike({ videoId: video._id }));
+
+      toast.success("Video liked successfully");
+    } catch (error) {
+      console.log("ERROR STATUS:", error.response?.status);
+      console.log("FULL ERROR:", error);
+      if (error.response?.status === 409) {
+        toast.error("Already liked the video");
+      } else if (error.response?.status === 401) {
+        toast.error("Please login to like this video");
+
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      } else {
+        toast.error("Something went wrong");
+      }
+      console.log(error);
+    }
+  };
 
   if (!video) {
     return (
@@ -45,10 +137,8 @@ export default function WatchPage() {
   return (
     <div className="bg-black text-white min-h-screen">
       <div className="max-w-[1400px] mx-auto px-6 py-6 flex flex-col lg:flex-row gap-8">
-
         {/* LEFT SECTION */}
         <div className="flex-1">
-
           {/* Video Player */}
           <div className="w-full aspect-video bg-zinc-900 rounded-xl overflow-hidden">
             <video
@@ -84,8 +174,11 @@ export default function WatchPage() {
             </div>
 
             <div className="flex items-center gap-3 flex-wrap">
-              <button className="bg-zinc-800 px-4 py-2 rounded-full text-sm hover:bg-zinc-700">
-                👍 1.5K
+              <button
+                className="bg-zinc-800 px-4 py-2 rounded-full text-sm hover:bg-zinc-700 hover:cursor-pointer"
+                onClick={likevideo}
+              >
+                👍 {videoLikes}
               </button>
               <button className="bg-zinc-800 px-4 py-2 rounded-full text-sm hover:bg-zinc-700">
                 Share
@@ -98,7 +191,13 @@ export default function WatchPage() {
 
           {/* Description */}
           <div className="bg-zinc-900 rounded-xl p-4 mt-4 text-sm">
-            <p className="text-gray-300">{video.views} views • 9 months ago</p>
+            <p className="text-gray-300">
+              {" "}
+              {video.views} views •{" "}
+              {formatDistanceToNow(new Date(video.createdAt), {
+                addSuffix: true,
+              })}
+            </p>
             <p className="mt-2 text-gray-400">{video.description}</p>
           </div>
 
@@ -110,21 +209,29 @@ export default function WatchPage() {
 
             {/* Add Comment */}
             <div className="flex items-start gap-3 mb-6">
-              <div className="w-9 h-9 bg-green-600 rounded-full flex items-center justify-center">
-                V
-              </div>
+              <img
+                className="w-9 h-9 rounded-full flex items-center justify-center"
+                src={video.owner.avatar}
+              />
 
               <input
                 type="text"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
                 placeholder="Add a comment..."
                 className="bg-transparent border-b border-gray-600 flex-1 outline-none pb-2"
               />
+              <button
+                className="bg-gray-600 p-3 rounded-2xl hover:bg-gray-900 hover:cursor-pointer"
+                onClick={AddComments}
+              >
+                Add
+              </button>
             </div>
 
             {/* Comment List */}
             {comments?.map((item) => (
               <div key={item._id} className="flex gap-3 mb-6">
-
                 <img
                   src={item.owner?.avatar}
                   className="w-9 h-9 rounded-full"
@@ -132,20 +239,15 @@ export default function WatchPage() {
                 />
 
                 <div>
-                  <p className="text-sm font-medium">
-                    {item.owner?.username}
-                  </p>
+                  <p className="text-sm font-medium">{item.owner?.username}</p>
 
-                  <p className="text-sm text-gray-400 mt-1">
-                    {item.content}
-                  </p>
+                  <p className="text-sm text-gray-400 mt-1">{item.content}</p>
 
                   <div className="flex gap-4 mt-2 text-xs text-gray-400">
                     <span>👍 {item.likes || 0}</span>
                     <span>Reply</span>
                   </div>
                 </div>
-
               </div>
             ))}
           </div>
@@ -159,7 +261,6 @@ export default function WatchPage() {
               <SidebarVideoCard key={v._id} video={v} />
             ))}
         </div>
-
       </div>
     </div>
   );
