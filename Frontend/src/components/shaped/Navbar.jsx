@@ -96,6 +96,7 @@ export default function Navbar() {
                       .replace("/upload/", "/upload/so_0,w_400,h_250,c_fill/")
                       .replace(".mp4", ".jpg")
                       .replace("http://", "https://");
+                      console.log(video)
 
                     return (
                       <div
@@ -108,7 +109,7 @@ export default function Navbar() {
                         }}
                       >
                         <img
-                          src={thumbnailUrl}
+                          src={video.thumbnail||thumbnailUrl}
                           alt={video.title}
                           className="w-14 h-10 object-cover rounded"
                         />
