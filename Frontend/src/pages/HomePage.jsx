@@ -5,6 +5,8 @@ import api from "../services/axiosInstance.js";
 import VideoCard from "./VideoCard.jsx";
 import SortSection from "../components/shaped/SortSection.jsx";
 import { toggleonpage } from "../features/auth/auth.slice.js";
+import registerLoading from "../../public/loding.json";
+import Lottie from "lottie-react";
 export default function Home() {
   const [startIndex, setStartIndex] = useState(0);
   const dispatch = useDispatch();
@@ -40,7 +42,6 @@ export default function Home() {
     fetchVideos(page);
   }, [page]);
 
-
   return (
     <div className="bg-[#0f0f0f] text-white min-h-screen">
       {/* ── Video Grid ── */}
@@ -63,9 +64,18 @@ export default function Home() {
 
         {/* Loader (instead of refreshing UI) */}
         {loading && (
-          <p className="text-center text-gray-400 mt-4">
-            Loading more videos...
-          </p>
+          <div className="flex flex-col items-center gap-6">
+            <Lottie
+              animationData={registerLoading}
+              loop={true}
+              className="w-80"
+            />
+            <p className="text-gray-600 text-lg font-semibold">
+              🚀 Starting server... Please wait 20–40 seconds while the backend
+              wakes up. This happens because the server is on a free hosting
+              plan.
+            </p>
+          </div>
         )}
       </div>
 
