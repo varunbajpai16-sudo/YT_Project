@@ -135,133 +135,179 @@ export default function WatchPage() {
     .replace("http://", "https://");
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      <div className="max-w-[1400px] mx-auto px-6 py-6 flex flex-col lg:flex-row gap-8">
-        {/* LEFT SECTION */}
-        <div className="flex-1">
-          {/* Video Player */}
-          <div className="w-full aspect-video bg-zinc-900 rounded-xl overflow-hidden">
-            <video
-              src={videoUrl}
-              controls
-              autoPlay
-              preload="metadata"
-              playsInline
-              className="w-full h-full object-cover"
-            />
-          </div>
+ <div className="bg-black text-white min-h-screen">
 
-          {/* Title */}
-          <h1 className="text-xl font-semibold mt-4">{video.title}</h1>
 
-          {/* Channel */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between mt-4 gap-4">
-            <div className="flex items-center gap-4">
-              <img
-                src={video.owner.avatar}
-                className="w-10 h-10 rounded-full"
-                alt="channel"
-              />
+  <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-6 flex flex-col lg:flex-row gap-6 lg:gap-8">
 
-              <div>
-                <p className="font-medium">{video.owner.username}</p>
-                <p className="text-sm text-gray-400">9.03K subscribers</p>
-              </div>
+    {/* LEFT SECTION */}
+    <div className="flex-1">
 
-              <button className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold ml-4 hover:bg-gray-200">
-                Subscribe
-              </button>
-            </div>
+      {/* Video Player */}
+      <div className="w-full aspect-video bg-zinc-900 rounded-lg sm:rounded-xl overflow-hidden">
+        <video
+          src={videoUrl}
+          controls
+          autoPlay
+          preload="metadata"
+          playsInline
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-            <div className="flex items-center gap-3 flex-wrap">
-              <button
-                className="bg-zinc-800 px-4 py-2 rounded-full text-sm hover:bg-zinc-700 hover:cursor-pointer"
-                onClick={likevideo}
-              >
-                👍 {videoLikes}
-              </button>
-              <button className="bg-zinc-800 px-4 py-2 rounded-full text-sm hover:bg-zinc-700">
-                Share
-              </button>
-              <button className="bg-zinc-800 px-4 py-2 rounded-full text-sm hover:bg-zinc-700">
-                Save
-              </button>
-            </div>
-          </div>
+      {/* Title */}
+      <h1 className="text-lg sm:text-xl font-semibold mt-4">
+        {video.title}
+      </h1>
 
-          {/* Description */}
-          <div className="bg-zinc-900 rounded-xl p-4 mt-4 text-sm">
-            <p className="text-gray-300">
-              {" "}
-              {video.views} views •{" "}
-              {formatDistanceToNow(new Date(video.createdAt), {
-                addSuffix: true,
-              })}
+      {/* Channel */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 gap-4">
+
+        <div className="flex items-center gap-3 sm:gap-4">
+
+          <img
+            src={video.owner.avatar}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full"
+            alt="channel"
+          />
+
+          <div>
+            <p className="font-medium text-sm sm:text-base">
+              {video.owner.username}
             </p>
-            <p className="mt-2 text-gray-400">{video.description}</p>
+
+            <p className="text-xs sm:text-sm text-gray-400">
+              9.03K subscribers
+            </p>
           </div>
 
-          {/* Comments */}
-          <div className="mt-8">
-            <h2 className="font-semibold mb-4">
-              {comments?.length || 0} Comments
-            </h2>
+          <button className="bg-white text-black px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold ml-2 sm:ml-4 hover:bg-gray-200">
+            Subscribe
+          </button>
 
-            {/* Add Comment */}
-            <div className="flex items-start gap-3 mb-6">
-              <img
-                className="w-9 h-9 rounded-full flex items-center justify-center"
-                src={video.owner.avatar}
-              />
-
-              <input
-                type="text"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Add a comment..."
-                className="bg-transparent border-b border-gray-600 flex-1 outline-none pb-2"
-              />
-              <button
-                className="bg-gray-600 p-3 rounded-2xl hover:bg-gray-900 hover:cursor-pointer"
-                onClick={AddComments}
-              >
-                Add
-              </button>
-            </div>
-
-            {/* Comment List */}
-            {comments?.map((item) => (
-              <div key={item._id} className="flex gap-3 mb-6">
-                <img
-                  src={item.owner?.avatar}
-                  className="w-9 h-9 rounded-full"
-                  alt="user"
-                />
-
-                <div>
-                  <p className="text-sm font-medium">{item.owner?.username}</p>
-
-                  <p className="text-sm text-gray-400 mt-1">{item.content}</p>
-
-                  <div className="flex gap-4 mt-2 text-xs text-gray-400">
-                    <span>👍 {item.likes || 0}</span>
-                    <span>Reply</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
-        {/* RIGHT SIDEBAR */}
-        <div className="w-full lg:w-[400px] space-y-4">
-          {videos
-            ?.filter((v) => v._id !== video._id)
-            .map((v) => (
-              <SidebarVideoCard key={v._id} video={v} />
-            ))}
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+
+          <button
+            className="bg-zinc-800 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm hover:bg-zinc-700"
+            onClick={likevideo}
+          >
+            👍 {videoLikes}
+          </button>
+
+          <button className="bg-zinc-800 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm hover:bg-zinc-700">
+            Share
+          </button>
+
+          <button className="bg-zinc-800 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm hover:bg-zinc-700">
+            Save
+          </button>
+
         </div>
       </div>
+
+      {/* Description */}
+      <div className="bg-zinc-900 rounded-lg sm:rounded-xl p-3 sm:p-4 mt-4 text-xs sm:text-sm">
+
+        <p className="text-gray-300">
+          {video.views} views •{" "}
+          {formatDistanceToNow(new Date(video.createdAt), {
+            addSuffix: true,
+          })}
+        </p>
+
+        <p className="mt-2 text-gray-400">
+          {video.description}
+        </p>
+
+      </div>
+
+      {/* Comments */}
+      <div className="mt-8">
+
+        <h2 className="font-semibold mb-4 text-sm sm:text-base">
+          {comments?.length || 0} Comments
+        </h2>
+
+        {/* Add Comment */}
+        <div className="flex gap-3 mb-6">
+
+          <img
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full"
+            src={video.owner.avatar}
+          />
+
+          <div className="flex-1 flex flex-col sm:flex-row gap-2 sm:gap-3">
+
+            <input
+              type="text"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Add a comment..."
+              className="bg-transparent border-b border-gray-600 flex-1 outline-none pb-2 text-sm"
+            />
+
+            <button
+              className="bg-gray-700 px-4 py-2 rounded-xl text-sm hover:bg-gray-900"
+              onClick={AddComments}
+            >
+              Add
+            </button>
+
+          </div>
+
+        </div>
+
+        {/* Comment List */}
+        {comments?.map((item) => (
+
+          <div key={item._id} className="flex gap-3 mb-6">
+
+            <img
+              src={item.owner?.avatar}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full"
+              alt="user"
+            />
+
+            <div>
+
+              <p className="text-sm font-medium">
+                {item.owner?.username}
+              </p>
+
+              <p className="text-sm text-gray-400 mt-1">
+                {item.content}
+              </p>
+
+              <div className="flex gap-4 mt-2 text-xs text-gray-400">
+                <span>👍 {item.likes || 0}</span>
+                <span>Reply</span>
+              </div>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+
     </div>
+
+    {/* RIGHT SIDEBAR */}
+    <div className="w-full lg:w-[380px] space-y-4">
+
+      {videos
+        ?.filter((v) => v._id !== video._id)
+        .map((v) => (
+          <SidebarVideoCard key={v._id} video={v} />
+        ))}
+
+    </div>
+
+  </div>
+
+</div>
   );
 }
