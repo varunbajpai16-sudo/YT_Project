@@ -10,22 +10,16 @@ const MainLayout = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
     const handleResize = () => {
-
-      // Only auto close on small screens
       if (window.innerWidth < 900) {
         dispatch(closeSidebar());
       }
-
     };
 
-    handleResize(); // run on load
-
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
-
   }, [dispatch]);
 
   return (
@@ -35,9 +29,9 @@ const MainLayout = () => {
 
       <div className="flex flex-1 overflow-hidden">
 
-        {/* Sidebar */}
+        {/* Desktop Sidebar */}
         <div
-          className={`transition-all duration-300 ${
+          className={`hidden md:block transition-all duration-300 ${
             sidebarOpen ? "w-[240px]" : "w-[80px]"
           }`}
         >
@@ -49,6 +43,11 @@ const MainLayout = () => {
           <Outlet />
         </div>
 
+      </div>
+
+      {/* Mobile Bottom Sidebar */}
+      <div className="md:hidden h-[60px] border-t border-gray-800 bg-black">
+        <Sidebar mobile />
       </div>
 
     </div>

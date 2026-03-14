@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import api from "../services/axiosInstance";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+
 export default function ChannelContent() {
   const [videos, setvideos] = useState([]);
   const user = useSelector((state) => state.auth.user);
@@ -14,7 +14,6 @@ export default function ChannelContent() {
     try {
       const res = await api.get("video/getuservideos");
       setvideos(res.data.data);
-      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -25,9 +24,9 @@ export default function ChannelContent() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-[#0f0f0f] text-gray-200">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#181818] p-6 flex flex-col justify-between">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#0f0f0f] text-gray-200 pb-16 md:pb-0">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-64 bg-[#181818] p-6 flex-col justify-between">
         <div>
           {/* Channel Info */}
           <div className="flex flex-col items-center mb-8">
@@ -70,46 +69,43 @@ export default function ChannelContent() {
             >
               Content
             </NavLink>
-
-            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
-              Analytics
-            </button>
-
-            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
-              Community
-            </button>
-
-            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
-              Subtitles
-            </button>
-
-            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
-              Content detection
-            </button>
-
-            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
-              Earn
-            </button>
-
-            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
-              Customisation
-            </button>
-
-            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-[#2a2a2a]">
-              Audio library
-            </button>
           </nav>
         </div>
 
-        {/* Bottom Links */}
         <div className="space-y-3 text-sm text-gray-400">
           <div className="cursor-pointer hover:text-white">Settings</div>
           <div className="cursor-pointer hover:text-white">Send feedback</div>
         </div>
       </aside>
 
+      {/* Mobile Bottom Navbar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#181818] border-t border-gray-700 flex justify-around items-center py-2 z-50">
+        <NavLink to="/channel" className="flex flex-col items-center text-xs">
+          🏠
+          <span>Dashboard</span>
+        </NavLink>
+
+        <NavLink
+          to="/channelcontent"
+          className="flex flex-col items-center text-xs"
+        >
+          🎬
+          <span>Content</span>
+        </NavLink>
+
+        <button className="flex flex-col items-center text-xs">
+          📊
+          <span>Analytics</span>
+        </button>
+
+        <button className="flex flex-col items-center text-xs">
+          ⚙️
+          <span>Settings</span>
+        </button>
+      </div>
+
       {/* Main Content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-4 md:p-6 overflow-x-auto">
         {/* Header */}
         <h1 className="text-xl font-semibold mb-6">Channel content</h1>
 
@@ -118,17 +114,15 @@ export default function ChannelContent() {
           <span className="border-b-2 border-white pb-3">Videos</span>
         </div>
 
-        {/* Filter */}
-
         {/* Table Header */}
-        <div className="grid grid-cols-[3fr_1fr_1fr_1.5fr_1fr_1fr_1fr] text-xs text-gray-400 border-b border-gray-700 py-3 gap-4">
+        <div className="min-w-[900px] grid grid-cols-[3fr_1fr_1fr_1.5fr_1fr_1fr_1fr] text-xs text-gray-400 border-b border-gray-700 py-3 gap-4">
           <span>Video</span>
           <span>Visibility</span>
           <span>Restrictions</span>
           <span>Date ↓</span>
           <span>Views</span>
           <span>Comments</span>
-          <span>Likes (vs dislikes)</span>
+          <span>Likes</span>
         </div>
 
         {/* Video List */}
@@ -142,9 +136,9 @@ export default function ChannelContent() {
             return (
               <div
                 key={video._id}
-                className="grid grid-cols-[3fr_1fr_1fr_1.5fr_1fr_1fr_1fr] items-center py-3 border-b border-gray-800 text-sm gap-4 hover:bg-gray-950"
+                className="min-w-[900px] grid grid-cols-[3fr_1fr_1fr_1.5fr_1fr_1fr_1fr] items-center py-3 border-b border-gray-800 text-sm gap-4 hover:bg-gray-950"
               >
-                {/* VIDEO INFO */}
+                {/* Video Info */}
                 <div className="flex items-center gap-4">
                   <div className="relative w-44 h-24 bg-black rounded overflow-hidden">
                     <img
@@ -167,7 +161,10 @@ export default function ChannelContent() {
                       >
                         ▶
                       </span>
-                      <span className="cursor-pointer hover:text-white">🗑️</span>
+
+                      <span className="cursor-pointer hover:text-white">
+                        🗑️
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -198,10 +195,6 @@ export default function ChannelContent() {
             <div className="w-32 h-32 bg-teal-500 rounded-xl mb-6"></div>
 
             <p className="text-gray-400 mb-4">No content available</p>
-
-            <button className="bg-white text-black px-5 py-2 rounded-full text-sm font-medium hover:bg-gray-200">
-              Upload videos
-            </button>
           </div>
         )}
       </main>

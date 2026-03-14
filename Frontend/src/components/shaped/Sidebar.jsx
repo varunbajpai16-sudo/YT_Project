@@ -2,19 +2,65 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = () => {
+const Sidebar = ({ mobile }) => {
   const onpage = useSelector((state) => state.auth.onpage);
   const togglesidebar = useSelector((state) => state.toggle.showSidebar);
 
   const navigate = useNavigate();
 
+  /* ---------------- MOBILE SIDEBAR ---------------- */
+
+  if (mobile) {
+    return (
+      <div className="fixed bottom-0 left-0 right-0 h-[60px] bg-black border-t border-gray-800 flex justify-around items-center text-white md:hidden">
+
+        <div
+          className={`flex flex-col items-center text-sm cursor-pointer ${
+            onpage === "Home" ? "text-red-500" : ""
+          }`}
+          onClick={() => navigate("/")}
+        >
+          <span>🏠</span>
+          <span className="text-xs">Home</span>
+        </div>
+
+        <div
+          className={`flex flex-col items-center text-sm cursor-pointer ${
+            onpage === "Shorts" ? "text-red-500" : ""
+          }`}
+          onClick={() => navigate("/sorts")}
+        >
+          <span>🎬</span>
+          <span className="text-xs">Shorts</span>
+        </div>
+
+        <div
+          className="flex flex-col items-center text-sm cursor-pointer"
+          onClick={() => navigate("/ChannelContent")}
+        >
+          <span>📺</span>
+          <span className="text-xs">Channel</span>
+        </div>
+
+        <div
+          className="flex flex-col items-center text-sm cursor-pointer"
+          onClick={() => navigate("/channel")}
+        >
+          <span>👤</span>
+          <span className="text-xs">You</span>
+        </div>
+
+      </div>
+    );
+  }
+
+  /* ---------------- DESKTOP SIDEBAR ---------------- */
+
   return (
     <div
-      className={`h-full bg-black text-white border-r border-gray-800 overflow-y-auto transition-all duration-300
+      className={`hidden md:block h-full bg-black text-white border-r border-gray-800 overflow-y-auto transition-all duration-300
       ${togglesidebar ? "w-[240px] p-5" : "w-[80px] p-3"}`}
     >
-      {/* Main Menu */}
-
       {/* Home */}
       <div
         className={`flex items-center ${
@@ -46,6 +92,7 @@ const Sidebar = () => {
           >
             📺
           </div>
+
           <div
             className="flex justify-center p-3 cursor-pointer"
             onClick={() => navigate("/channel")}
@@ -60,59 +107,70 @@ const Sidebar = () => {
         <>
           <hr className="border-gray-800 my-4" />
 
-          {/* More from YouTube */}
           <div className="mb-6">
-            <h2 className="text-white font-semibold mb-4">More from YouTube</h2>
+            <h2 className="text-white font-semibold mb-4">
+              More from YouTube
+            </h2>
 
             <div className="space-y-1">
               <div className="flex items-center gap-4 px-2 py-2 rounded-lg hover:bg-gray-900 cursor-pointer">
-                <span>▶️</span>
-                <a href="https://www.youtube.com/premium">YouTube Premium</a>
+                ▶️
+                <a href="https://www.youtube.com/premium">
+                  YouTube Premium
+                </a>
+              </div>
+
+              <div
+                className="flex items-center gap-4 px-2 py-2 rounded-lg hover:bg-gray-900 cursor-pointer"
+                onClick={() => navigate("/channel")}
+              >
+                ⬢
+                <span>YouTube Studio</span>
               </div>
 
               <div className="flex items-center gap-4 px-2 py-2 rounded-lg hover:bg-gray-900 cursor-pointer">
-                <span>⬢</span>
-                <span onClick={() => navigate("/channel")}>YouTube Studio</span>
-              </div>
-
-              <div className="flex items-center gap-4 px-2 py-2 rounded-lg hover:bg-gray-900 cursor-pointer">
-                <span>🎵</span>
-                <a href="https://music.youtube.com/">YouTube Music</a>
+                🎵
+                <a href="https://music.youtube.com/">
+                  YouTube Music
+                </a>
               </div>
             </div>
           </div>
 
           <hr className="border-gray-800 my-4" />
 
-          {/* Settings */}
           <div className="space-y-1">
             <div
               className="flex items-center gap-4 px-2 py-2 rounded-lg hover:bg-gray-900 cursor-pointer"
               onClick={() => navigate("/setting")}
             >
-              <span>⚙️</span>
+              ⚙️
               <span>Settings</span>
             </div>
 
             <div className="flex items-center gap-4 px-2 py-2 rounded-lg hover:bg-gray-900 cursor-pointer">
-              <span>🚩</span>
-              <a href="https://www.youtube.com/t/contact_us">Report history</a>
+              🚩
+              <a href="https://www.youtube.com/t/contact_us">
+                Report history
+              </a>
             </div>
 
             <div className="flex items-center gap-4 px-2 py-2 rounded-lg hover:bg-gray-900 cursor-pointer">
-              <span>❓</span>
+              ❓
               <a href="https://support.google.com/youtube/">Help</a>
             </div>
 
-            <div className="flex items-center gap-4 px-2 py-2 rounded-lg hover:bg-gray-900 cursor-pointer">
-              <span>💬</span>
-              <span onClick={() => navigate("/feedback")}>Send feedback</span>
+            <div
+              className="flex items-center gap-4 px-2 py-2 rounded-lg hover:bg-gray-900 cursor-pointer"
+              onClick={() => navigate("/feedback")}
+            >
+              💬
+              <span>Send feedback</span>
             </div>
           </div>
 
           <hr className="border-gray-800 my-4" />
 
-          {/* Footer */}
           <div className="text-xs text-gray-500 space-y-3">
             <div className="flex flex-wrap gap-x-3">
               <span>About</span>
