@@ -70,7 +70,7 @@ export default function Home() {
               loop={true}
               className="w-80"
             />
-            <p className="text-gray-600 text-lg font-semibold">
+            <p className="text-white text-lg font-semibold">
               🚀 Starting server... Please wait 20–40 seconds while the backend
               wakes up. This happens because the server is on a free hosting
               plan.
