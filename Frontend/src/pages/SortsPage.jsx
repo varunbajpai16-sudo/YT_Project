@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export default function ShortsPage() {
-
   const videos = useSelector((state) => state.video.videos);
   const comments = useSelector((state) => state.comments.comments);
   const likes = useSelector((state) => state.likes.videoLikes);
@@ -35,12 +34,9 @@ export default function ShortsPage() {
   // ===================== AUTO PLAY / PAUSE ON SCROLL =====================
 
   useEffect(() => {
-
     const observer = new IntersectionObserver(
       (entries) => {
-
         entries.forEach((entry) => {
-
           const video = entry.target;
 
           if (entry.isIntersecting) {
@@ -48,13 +44,11 @@ export default function ShortsPage() {
           } else {
             video.pause();
           }
-
         });
-
       },
       {
-        threshold: 0.7
-      }
+        threshold: 0.7,
+      },
     );
 
     videoRefs.current.forEach((video) => {
@@ -66,7 +60,6 @@ export default function ShortsPage() {
         if (video) observer.unobserve(video);
       });
     };
-
   }, [shortsVideos]);
 
   // ===================== LIKE =====================
@@ -79,7 +72,7 @@ export default function ShortsPage() {
         setVideoLikes({
           videoId,
           likes: res.data.data.length,
-        })
+        }),
       );
     } catch (error) {
       console.log(error);
@@ -118,7 +111,6 @@ export default function ShortsPage() {
 
   const addCommentHandler = async () => {
     try {
-
       if (!comment.trim()) {
         return toast.error("Comment cannot be empty");
       }
@@ -133,7 +125,6 @@ export default function ShortsPage() {
       setComment("");
 
       toast.success("Comment added");
-
     } catch (error) {
       toast.error("Failed to comment");
     }
@@ -147,23 +138,18 @@ export default function ShortsPage() {
 
   return (
     <div className="bg-black min-h-screen flex justify-center items-center">
-
       {/* SHORTS CONTAINER */}
       <div className="w-full max-w-[420px] h-screen overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
-
         {shortsVideos.map((video, index) => {
-
           const videoUrl = video.videofile
             .replace("/upload/", "/upload/q_auto,f_auto,w_1280/vc_auto/")
             .replace("http://", "https://");
 
           return (
-
             <div
               key={video._id}
               className="relative w-full h-screen snap-start bg-black overflow-hidden"
             >
-
               {/* VIDEO */}
               <video
                 ref={(el) => (videoRefs.current[index] = el)}
@@ -171,76 +157,82 @@ export default function ShortsPage() {
                 loop
                 playsInline
                 preload="metadata"
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
+                onClick={(e) => {
+                  if (e.target.paused) {
+                    e.target.play();
+                  } else {
+                    e.target.pause();
+                  }
+                }}
               />
 
-              {/* RIGHT ACTION BAR */}
-              <div className="absolute right-3 sm:right-4 bottom-24 sm:bottom-28 flex flex-col items-center gap-5 sm:gap-6 text-white">
+              {/* GRADIENT OVERLAY */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30"></div>
 
+              {/* RIGHT ACTION BAR */}
+              <div className="absolute right-4 bottom-28 flex flex-col items-center gap-6 text-white">
                 <img
                   src={video.owner?.avatar}
                   alt="Profile"
-                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white object-cover"
+                  className="w-12 h-12 rounded-full border-2 border-white object-cover shadow-lg"
                 />
 
                 <div
-                  className="flex flex-col items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer hover:scale-110 transition"
                   onClick={() => likeVideo(video._id)}
                 >
-                  <span className="text-2xl sm:text-3xl">❤️</span>
+                  <span className="text-3xl">❤️</span>
                   <span className="text-xs">{likes[video._id] || 0}</span>
                 </div>
 
                 <div
-                  className="flex flex-col items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer hover:scale-110 transition"
                   onClick={() => {
                     setShowComments(true);
                     setCurrentVideo(video);
                     fetchComments(video);
                   }}
                 >
-                  <span className="text-2xl sm:text-3xl">💬</span>
+                  <span className="text-3xl">💬</span>
                   <span className="text-xs">{comments?.length || 0}</span>
                 </div>
 
                 <div className="flex flex-col items-center">
-                  <span className="text-2xl sm:text-3xl">↗</span>
+                  <span className="text-3xl">📤</span>
                   <span className="text-xs">Share</span>
                 </div>
-
               </div>
 
               {/* BOTTOM INFO */}
-              <div className="absolute bottom-0 w-full px-3 sm:px-4 pb-5 sm:pb-6 pt-16 sm:pt-20 bg-gradient-to-t from-black via-black/70 to-transparent text-white">
-
+              <div className="absolute bottom-0 w-full px-4 pb-7 pt-20 text-white">
                 <div className="flex items-center gap-3 mb-2">
+                  <img
+                    src={video.owner?.avatar}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+
                   <span className="font-semibold text-sm">
                     @{video.owner?.username}
                   </span>
 
-                  <button className="bg-white text-black text-xs px-3 sm:px-4 py-1 rounded-full font-semibold hover:bg-gray-200">
+                  <button className="bg-white text-black text-xs px-4 py-1 rounded-full font-semibold hover:bg-gray-200">
                     Subscribe
                   </button>
                 </div>
 
-                <p className="text-xs sm:text-sm leading-snug mb-3">
+                <p className="text-sm text-gray-200 leading-snug max-w-[80%]">
                   {video.description}
                 </p>
-
               </div>
-
             </div>
-
           );
         })}
-
       </div>
 
       {/* COMMENTS POPUP */}
       {showComments && (
-
         <div className="fixed bottom-0 left-0 w-full md:w-[420px] md:left-1/2 md:-translate-x-1/2 h-[65%] bg-zinc-900 text-white p-4 rounded-t-2xl overflow-y-auto">
-
           <div className="flex justify-between mb-4">
             <h2 className="font-semibold">Comments</h2>
             <button onClick={() => setShowComments(false)}>✖</button>
@@ -264,21 +256,16 @@ export default function ShortsPage() {
 
           {comments?.map((c) => (
             <div key={c._id} className="flex gap-3 mb-4">
-
               <img src={c.owner?.avatar} className="w-8 h-8 rounded-full" />
 
               <div>
                 <p className="text-sm font-semibold">{c.owner?.username}</p>
                 <p className="text-sm text-gray-300">{c.content}</p>
               </div>
-
             </div>
           ))}
-
         </div>
-
       )}
-
     </div>
   );
 }

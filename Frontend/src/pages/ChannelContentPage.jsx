@@ -3,13 +3,23 @@ import api from "../services/axiosInstance";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function ChannelContent() {
   const [videos, setvideos] = useState([]);
   const user = useSelector((state) => state.auth.user);
   const avatar = user?.avatar;
   const navigate = useNavigate();
-
+  const DeleteVideo = async (video) => {
+    try {
+      await api.delete(`/video/deletevideo/${video._id}`);
+      toast.success("Video Deleted Successfully");
+      setvideos((prev) => prev.filter((v) => v._id !== video._id));
+    } catch (error) {
+      toast.error("Failed to delete video");
+      console.log(error);
+    }
+  };
   const featchuservideos = async () => {
     try {
       const res = await api.get("video/getuservideos");
@@ -93,12 +103,10 @@ export default function ChannelContent() {
           <span>Content</span>
         </NavLink>
 
-        <button className="flex flex-col items-center text-xs">
-          📊
-          <span>Analytics</span>
-        </button>
-
-        <button className="flex flex-col items-center text-xs">
+        <button
+          className="flex flex-col items-center text-xs"
+          onClick={() => navigate("/setting")}
+        >
           ⚙️
           <span>Settings</span>
         </button>
@@ -162,7 +170,10 @@ export default function ChannelContent() {
                         ▶
                       </span>
 
-                      <span className="cursor-pointer hover:text-white">
+                      <span
+                        className="cursor-pointer hover:text-white"
+                        onClick={() => DeleteVideo(video)}
+                      >
                         🗑️
                       </span>
                     </div>
