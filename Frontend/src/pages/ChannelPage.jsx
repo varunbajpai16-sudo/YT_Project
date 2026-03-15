@@ -46,6 +46,7 @@ const Channel = React.memo(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const data = new FormData();
       data.append("title", formData.title);
@@ -57,19 +58,14 @@ const Channel = React.memo(() => {
 
       const response = await api.post("video/uploadvideo", data);
 
-      setapiuplode(false);
       toast.success(response.data.message);
-
     } catch (error) {
-      console.log(error);
-
       if (error.response && error.response.data) {
         toast.error(error.response.data.message);
       } else {
         toast.error("Upload failed");
       }
-    }
-    finally{
+    } finally {
       setapiuplode(false);
     }
   };
@@ -81,9 +77,9 @@ const Channel = React.memo(() => {
       <aside className="hidden md:flex w-64 bg-[#181818] p-6 flex-col justify-between">
         <div>
           <div className="flex flex-col items-center mb-8">
-            <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center mb-3">
+            <div className="w-20 h-20 rounded-full overflow-hidden mb-3">
               {avatar ? (
-                <img src={avatar} alt="Guest" className="w-full h-full object-cover"/>
+                <img src={avatar} className="w-full h-full object-cover"/>
               ) : (
                 <span>Guest</span>
               )}
@@ -94,10 +90,11 @@ const Channel = React.memo(() => {
           </div>
 
           <nav className="space-y-2 text-sm">
+
             <NavLink
               to="/channel"
-              className={({ isActive }) =>
-                `w-full block text-left px-4 py-2 rounded-lg ${
+              className={({isActive}) =>
+                `block px-4 py-2 rounded-lg ${
                   isActive ? "bg-black" : "hover:bg-[#2a2a2a]"
                 }`
               }
@@ -107,14 +104,15 @@ const Channel = React.memo(() => {
 
             <NavLink
               to="/channelcontent"
-              className={({ isActive }) =>
-                `w-full block text-left px-4 py-2 rounded-lg ${
+              className={({isActive}) =>
+                `block px-4 py-2 rounded-lg ${
                   isActive ? "bg-black" : "hover:bg-[#2a2a2a]"
                 }`
               }
             >
               Content
             </NavLink>
+
           </nav>
         </div>
 
@@ -124,41 +122,62 @@ const Channel = React.memo(() => {
         </div>
       </aside>
 
+
       {/* Mobile Bottom Navbar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#181818] border-t border-gray-700 flex justify-around items-center py-2 z-50">
-        <NavLink to="/channel" className="flex flex-col items-center text-xs">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#181818] border-t border-gray-700 flex justify-around py-2 z-50">
+
+        <NavLink
+          to="/channel"
+          className={({isActive}) =>
+            `flex flex-col items-center text-xs ${
+              isActive ? "text-white" : "text-gray-400"
+            }`
+          }
+        >
           🏠
           <span>Dashboard</span>
         </NavLink>
 
-        <NavLink to="/channelcontent" className="flex flex-col items-center text-xs">
+        <NavLink
+          to="/channelcontent"
+          className={({isActive}) =>
+            `flex flex-col items-center text-xs ${
+              isActive ? "text-white" : "text-gray-400"
+            }`
+          }
+        >
           🎬
           <span>Content</span>
         </NavLink>
 
-        <button className="flex flex-col items-center text-xs">
+        <button className="flex flex-col items-center text-xs text-gray-400">
           📊
           <span>Analytics</span>
         </button>
 
-        <button className="flex flex-col items-center text-xs">
+        <button className="flex flex-col items-center text-xs text-gray-400">
           ⚙️
           <span>Settings</span>
         </button>
+
       </div>
 
-      {/* Main */}
-      <main className="flex-1 p-6 md:p-10">
-        <h1 className="text-2xl font-semibold mb-8">Channel dashboard</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Main */}
+      <main className="flex-1 p-4 md:p-10">
+
+        <h1 className="text-2xl font-semibold mb-8">
+          Channel dashboard
+        </h1>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
 
           {/* Upload Card */}
-          <div className="border border-gray-700 rounded-xl p-10 flex flex-col items-center justify-center text-center">
+          <div className="border border-gray-700 rounded-xl p-6 md:p-10 flex flex-col items-center text-center">
+
             <div className="w-40 h-40 mb-6 overflow-hidden rounded-2xl">
               <img
                 src="https://www.gstatic.com/youtube/img/creator/no_content_illustration_v4_darkmode.svg"
-                alt="Channel"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -169,20 +188,24 @@ const Channel = React.memo(() => {
             </p>
 
             <button
-              className="bg-white text-black px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-200 transition"
+              className="bg-white text-black px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-200"
               onClick={() => setuploade(true)}
             >
               Upload videos
             </button>
+
           </div>
 
         </div>
       </main>
 
+
       {/* Upload Modal */}
       {uploade && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="w-[95%] md:w-[800px] h-[520px] bg-[#212121] rounded-2xl text-white flex flex-col">
+
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+
+          <div className="w-full md:w-[800px] max-h-[90vh] bg-[#212121] rounded-2xl flex flex-col overflow-y-auto">
 
             <div className="flex justify-between items-center px-6 py-4 border-b border-gray-700">
               <h2 className="text-lg font-semibold">Upload videos</h2>
@@ -195,13 +218,13 @@ const Channel = React.memo(() => {
               </button>
             </div>
 
-            <div className="flex flex-col items-center justify-center flex-1 text-center">
+            <div className="flex flex-col items-center justify-center flex-1 text-center p-6">
 
               <div className="w-28 h-28 rounded-full bg-[#181818] flex items-center justify-center mb-6">
                 ⬆️
               </div>
 
-              <p className="text-lg mb-2">
+              <p className="text-lg mb-4">
                 Drag and drop video files to upload
               </p>
 
@@ -215,35 +238,41 @@ const Channel = React.memo(() => {
               />
 
               <button
-                className="bg-white text-black px-5 py-2 rounded-full text-sm font-medium hover:bg-gray-200"
+                className="bg-white text-black px-5 py-2 rounded-full text-sm"
                 onClick={() => fileInputRef.current.click()}
               >
                 Select files
               </button>
+
             </div>
 
           </div>
+
         </div>
       )}
 
-      {/* VIDEO DETAILS MODAL (RESTORED) */}
+
+
+      {/* VIDEO DETAILS MODAL */}
       {flag && (
+
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
 
-          <div className="w-full max-w-5xl bg-zinc-900 text-white rounded-xl p-6">
+          <div className="w-full max-w-5xl bg-zinc-900 rounded-xl p-4 md:p-6 max-h-[90vh] overflow-y-auto">
 
             <div className="flex justify-between mb-6">
               <h2 className="text-lg font-semibold">Video Details</h2>
 
               <button
-                className="text-gray-400 hover:text-white"
                 onClick={() => setflag(false)}
+                className="text-gray-400 hover:text-white"
               >
                 ✕
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
 
               <div className="md:col-span-2 space-y-6">
 
@@ -256,15 +285,15 @@ const Channel = React.memo(() => {
 
                 <textarea
                   name="description"
-                  placeholder="Description"
                   rows="5"
+                  placeholder="Description"
                   onChange={HandelChange}
                   className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2"
                 />
 
                 <button
                   onClick={() => thumbnailref.current.click()}
-                  className="border border-dashed border-zinc-700 px-6 py-4 rounded-lg"
+                  className="border border-dashed border-zinc-700 px-6 py-4 rounded-lg w-full"
                 >
                   Upload Thumbnail
                 </button>
@@ -280,6 +309,7 @@ const Channel = React.memo(() => {
 
               </div>
 
+
               <div className="bg-zinc-800 p-4 rounded-lg">
 
                 <video
@@ -288,7 +318,7 @@ const Channel = React.memo(() => {
                       ? URL.createObjectURL(formData.videofile)
                       : ""
                   }
-                  className="w-full"
+                  className="w-full rounded-lg max-h-64 object-cover"
                   controls
                 />
 
@@ -300,25 +330,47 @@ const Channel = React.memo(() => {
 
             </div>
 
+
             <div className="flex justify-end mt-6">
+
               <button
                 onClick={handleSubmit}
                 className="bg-white text-black px-6 py-2 rounded-full"
               >
                 Upload
               </button>
+
             </div>
 
           </div>
+
         </div>
+
       )}
 
+
+
+      {/* Upload Loader */}
       {apiuplode && (
+
         <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50">
-          <Lottie animationData={registerLoading} loop className="w-72" />
-          <p className="text-white text-lg font-semibold mt-4">Uploading...</p>
+
+          <Lottie
+            animationData={registerLoading}
+            loop
+            className="w-40 md:w-72"
+          />
+
+          <p className="text-white text-lg font-semibold mt-4">
+            Uploading...
+          </p>
+
         </div>
+
       )}
+
+      <Toaster/>
+
     </div>
   );
 });
