@@ -59,6 +59,9 @@ const Channel = React.memo(() => {
       const response = await api.post("video/uploadvideo", data);
 
       toast.success(response.data.message);
+      setTimeout(() => {
+        navigate("/channelcontent")
+      }, 500);
     } catch (error) {
       if (error.response && error.response.data) {
         toast.error(error.response.data.message);
@@ -304,14 +307,25 @@ const Channel = React.memo(() => {
 
       {/* Upload Loader */}
       {apiuplode && (
-        <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50">
-          <Lottie
-            animationData={registerLoading}
-            loop
-            className="w-40 md:w-72"
-          />
+        <div className="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-50">
+          <div className="bg-[#181818] rounded-2xl p-8 flex flex-col items-center gap-6 max-w-md text-center shadow-xl">
+            <Lottie
+              animationData={registerLoading}
+              loop={true}
+              className="w-48"
+            />
 
-          <p className="text-white text-lg font-semibold mt-4">Uploading...</p>
+            <h2 className="text-xl font-semibold text-white">Uploading....</h2>
+
+            {/* Animated dots */}
+            <div className="flex gap-2 mt-2">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+            </div>
+
+            <p className="text-xs text-gray-500">Thanks for your patience 🙏</p>
+          </div>
         </div>
       )}
 

@@ -17,12 +17,10 @@ export default function ChannelContent() {
   const DeleteVideo = async () => {
     try {
       await api.delete(`/video/deletevideo/${selectedVideo._id}`);
-
       toast.success("Video Deleted Successfully");
-
       setvideos((prev) => prev.filter((v) => v._id !== selectedVideo._id));
-
       setShowDeleteModal(false);
+
       setSelectedVideo(null);
     } catch (error) {
       toast.error("Failed to delete video");
@@ -45,14 +43,17 @@ export default function ChannelContent() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#0f0f0f] text-gray-200 pb-16 md:pb-0">
-
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-64 bg-[#181818] p-6 flex-col justify-between">
         <div>
           <div className="flex flex-col items-center mb-8">
             <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center mb-3">
               {avatar ? (
-                <img src={avatar} alt="Guest" className="w-full h-full object-cover"/>
+                <img
+                  src={avatar}
+                  alt="Guest"
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <span>Guest</span>
               )}
@@ -100,7 +101,10 @@ export default function ChannelContent() {
           <span>Dashboard</span>
         </NavLink>
 
-        <NavLink to="/channelcontent" className="flex flex-col items-center text-xs">
+        <NavLink
+          to="/channelcontent"
+          className="flex flex-col items-center text-xs"
+        >
           🎬
           <span>Content</span>
         </NavLink>
@@ -144,7 +148,6 @@ export default function ChannelContent() {
                 key={video._id}
                 className="min-w-[900px] grid grid-cols-[3fr_1fr_1fr_1.5fr_1fr_1fr_1fr] items-center py-3 border-b border-gray-800 text-sm gap-4 hover:bg-gray-950"
               >
-
                 <div className="flex items-center gap-4">
                   <div className="relative w-44 h-24 bg-black rounded overflow-hidden">
                     <img
@@ -161,7 +164,6 @@ export default function ChannelContent() {
                     <p className="text-sm text-white">{video.title}</p>
 
                     <div className="flex gap-3 text-gray-400 mt-1 text-xs">
-
                       <span
                         className="cursor-pointer hover:text-white"
                         onClick={() => navigate("/watch", { state: { video } })}
@@ -178,7 +180,6 @@ export default function ChannelContent() {
                       >
                         🗑️
                       </span>
-
                     </div>
                   </div>
                 </div>
@@ -213,21 +214,19 @@ export default function ChannelContent() {
 
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
-
           <div className="bg-[#181818] rounded-xl p-6 w-[90%] max-w-md shadow-xl">
-
-            <h2 className="text-lg font-semibold mb-2">
-              Delete Video
-            </h2>
+            <h2 className="text-lg font-semibold mb-2">Delete Video</h2>
 
             <p className="text-sm text-gray-400 mb-6">
               Are you sure you want to delete
-              <span className="text-white font-medium"> "{selectedVideo?.title}" </span>
+              <span className="text-white font-medium">
+                {" "}
+                "{selectedVideo?.title}"{" "}
+              </span>
               ? This action cannot be undone.
             </p>
 
             <div className="flex justify-end gap-3">
-
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-sm"
@@ -241,13 +240,10 @@ export default function ChannelContent() {
               >
                 Delete
               </button>
-
             </div>
-
           </div>
         </div>
       )}
-
     </div>
   );
 }

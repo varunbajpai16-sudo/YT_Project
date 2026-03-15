@@ -18,7 +18,16 @@ import SettingsPage from "./pages/SettingPage";
 function App() {
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            background: "#181818",
+            color: "#fff",
+          },
+        }}
+      />
       <Routes>
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
@@ -43,8 +52,7 @@ function App() {
           <Route path="/feedback" element={<SendFeedback />} />
         </Route>
 
-          <Route path="/setting" element={<SettingsPage />} />
-        
+        <Route path="/setting" element={<SettingsPage />} />
       </Routes>
     </>
   );
