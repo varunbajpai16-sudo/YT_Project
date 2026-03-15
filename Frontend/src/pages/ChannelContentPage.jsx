@@ -7,19 +7,29 @@ import toast from "react-hot-toast";
 
 export default function ChannelContent() {
   const [videos, setvideos] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+
   const user = useSelector((state) => state.auth.user);
   const avatar = user?.avatar;
   const navigate = useNavigate();
-  const DeleteVideo = async (video) => {
+
+  const DeleteVideo = async () => {
     try {
-      await api.delete(`/video/deletevideo/${video._id}`);
+      await api.delete(`/video/deletevideo/${selectedVideo._id}`);
+
       toast.success("Video Deleted Successfully");
-      setvideos((prev) => prev.filter((v) => v._id !== video._id));
+
+      setvideos((prev) => prev.filter((v) => v._id !== selectedVideo._id));
+
+      setShowDeleteModal(false);
+      setSelectedVideo(null);
     } catch (error) {
       toast.error("Failed to delete video");
       console.log(error);
     }
   };
+
   const featchuservideos = async () => {
     try {
       const res = await api.get("video/getuservideos");
@@ -35,18 +45,14 @@ export default function ChannelContent() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#0f0f0f] text-gray-200 pb-16 md:pb-0">
+
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-64 bg-[#181818] p-6 flex-col justify-between">
         <div>
-          {/* Channel Info */}
           <div className="flex flex-col items-center mb-8">
             <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center mb-3">
               {avatar ? (
-                <img
-                  src={avatar}
-                  alt="Guest"
-                  className="w-full h-full object-cover"
-                />
+                <img src={avatar} alt="Guest" className="w-full h-full object-cover"/>
               ) : (
                 <span>Guest</span>
               )}
@@ -56,7 +62,6 @@ export default function ChannelContent() {
             <p className="text-sm font-medium">{user?.fullname}</p>
           </div>
 
-          {/* Menu */}
           <nav className="space-y-2 text-sm">
             <NavLink
               to="/channel"
@@ -95,10 +100,7 @@ export default function ChannelContent() {
           <span>Dashboard</span>
         </NavLink>
 
-        <NavLink
-          to="/channelcontent"
-          className="flex flex-col items-center text-xs"
-        >
+        <NavLink to="/channelcontent" className="flex flex-col items-center text-xs">
           🎬
           <span>Content</span>
         </NavLink>
@@ -114,15 +116,12 @@ export default function ChannelContent() {
 
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-6 overflow-x-auto">
-        {/* Header */}
         <h1 className="text-xl font-semibold mb-6">Channel content</h1>
 
-        {/* Tabs */}
         <div className="flex gap-6 text-sm border-b border-gray-700 pb-3 mb-6">
           <span className="border-b-2 border-white pb-3">Videos</span>
         </div>
 
-        {/* Table Header */}
         <div className="min-w-[900px] grid grid-cols-[3fr_1fr_1fr_1.5fr_1fr_1fr_1fr] text-xs text-gray-400 border-b border-gray-700 py-3 gap-4">
           <span>Video</span>
           <span>Visibility</span>
@@ -133,7 +132,6 @@ export default function ChannelContent() {
           <span>Likes</span>
         </div>
 
-        {/* Video List */}
         {videos.length > 0 &&
           videos.map((video) => {
             const thumbnailUrl = video.videofile
@@ -146,7 +144,7 @@ export default function ChannelContent() {
                 key={video._id}
                 className="min-w-[900px] grid grid-cols-[3fr_1fr_1fr_1.5fr_1fr_1fr_1fr] items-center py-3 border-b border-gray-800 text-sm gap-4 hover:bg-gray-950"
               >
-                {/* Video Info */}
+
                 <div className="flex items-center gap-4">
                   <div className="relative w-44 h-24 bg-black rounded overflow-hidden">
                     <img
@@ -163,6 +161,7 @@ export default function ChannelContent() {
                     <p className="text-sm text-white">{video.title}</p>
 
                     <div className="flex gap-3 text-gray-400 mt-1 text-xs">
+
                       <span
                         className="cursor-pointer hover:text-white"
                         onClick={() => navigate("/watch", { state: { video } })}
@@ -171,11 +170,15 @@ export default function ChannelContent() {
                       </span>
 
                       <span
-                        className="cursor-pointer hover:text-white"
-                        onClick={() => DeleteVideo(video)}
+                        className="cursor-pointer hover:text-red-500"
+                        onClick={() => {
+                          setSelectedVideo(video);
+                          setShowDeleteModal(true);
+                        }}
                       >
                         🗑️
                       </span>
+
                     </div>
                   </div>
                 </div>
@@ -192,23 +195,59 @@ export default function ChannelContent() {
                 </div>
 
                 <span>{video.views || 0}</span>
-
                 <span>{video.commentsCount || 0}</span>
-
                 <span>-</span>
               </div>
             );
           })}
 
-        {/* Empty State */}
         {videos.length === 0 && (
           <div className="flex flex-col items-center justify-center h-[400px] text-center">
             <div className="w-32 h-32 bg-teal-500 rounded-xl mb-6"></div>
-
             <p className="text-gray-400 mb-4">No content available</p>
           </div>
         )}
       </main>
+
+      {/* DELETE CONFIRMATION MODAL */}
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+
+          <div className="bg-[#181818] rounded-xl p-6 w-[90%] max-w-md shadow-xl">
+
+            <h2 className="text-lg font-semibold mb-2">
+              Delete Video
+            </h2>
+
+            <p className="text-sm text-gray-400 mb-6">
+              Are you sure you want to delete
+              <span className="text-white font-medium"> "{selectedVideo?.title}" </span>
+              ? This action cannot be undone.
+            </p>
+
+            <div className="flex justify-end gap-3">
+
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-sm"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={DeleteVideo}
+                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-sm"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
