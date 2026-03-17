@@ -39,13 +39,13 @@ app.use('/api/v1/playlist', playlistrouter)
 app.use('/api/v1/comments', commentsrouter)
 
 app.use('/api/v1/likes', likesrouter)
+const __dirname = path.resolve();
 
-const __dirname = path.resolve()
+// Serve frontend
+app.use(express.static(path.join(__dirname, "Frontend", "dist")));
 
-app.use(express.static(path.join(__dirname, '../Frontend/dist')))
-
-app.use((req, res) => {
-  res.sendFile(path.resolve(__dirname, '../Frontend', 'dist', 'index.html'))
-})
-
+// Fallback for React routes
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "Frontend", "dist", "index.html"));
+});
 export default app
