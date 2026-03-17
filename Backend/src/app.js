@@ -44,8 +44,8 @@ const __dirname = path.resolve();
 // Serve frontend
 app.use(express.static(path.join(__dirname, "Frontend", "dist")));
 
-// Fallback for React routes
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "Frontend", "dist", "index.html"));
-});
+// fallback (VERY IMPORTANT)
+app.use((req, res) => {
+  res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
+}); 
 export default app
